@@ -53,14 +53,16 @@ CREATE TABLE `tb_bookstore_carousel` (
 LOCK TABLES `tb_bookstore_carousel` WRITE;
 /*!40000 ALTER TABLE `tb_bookstore_carousel` DISABLE KEYS */;
 
-INSERT INTO `tb_bookstore_carousel` (`carousel_id`, `carousel_url`, `redirect_url`, `carousel_rank`, `is_deleted`, `create_time`, `create_user`, `update_time`, `update_user`)
-VALUES
-	(1,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner2.jpg','##',200,1,'2019-08-23 17:50:45',0,'2019-11-10 00:23:01',0),
-	(2,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner1.png','##',13,0,'2019-11-29 00:00:00',0,'2019-11-29 00:00:00',0),
-	(3,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner3.jpg','##',0,1,'2019-09-18 18:26:38',0,'2019-11-10 00:23:01',0),
-	(5,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner2.png','##',0,0,'2019-11-29 00:00:00',0,'2019-11-29 00:00:00',0),
-	(6,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner1.png','##',101,1,'2019-09-19 23:37:40',0,'2019-11-07 00:15:52',0),
-	(7,'https://newbee-mall.oss-cn-beijing.aliyuncs.com/images/banner2.png','##',99,1,'2019-09-19 23:37:58',0,'2019-10-22 00:15:01',0);
+-- ----------------------------
+-- Records of tb_bookstore_carousel
+-- ----------------------------
+INSERT INTO `tb_bookstore_carousel` VALUES (1, 'http://localhost:8888/static/698d51a19d8a121ce581499d7b701668_20230424101911.png', 'https://book.douban.com/subject/33429002/', 1, 0, '2023-04-24 10:19:54', 0, '2023-04-24 10:19:54', 0);
+INSERT INTO `tb_bookstore_carousel` VALUES (2, 'http://localhost:8888/static/bcbe3365e6ac95ea2c0343a2395834dd_20230424102000.png', 'https://book.douban.com/subject/10808707/', 2, 0, '2023-04-24 10:21:31', 0, '2023-04-24 10:21:31', 0);
+INSERT INTO `tb_bookstore_carousel` VALUES (3, 'http://localhost:8888/static/310dcbbf4cce62f762a2aaa148d556bd_20230424102134.png', 'https://book.douban.com/subject/26831879/', 3, 0, '2023-04-24 10:22:03', 0, '2023-04-24 10:22:03', 0);
+INSERT INTO `tb_bookstore_carousel` VALUES (4, 'http://localhost:8888/static/550a141f12de6341fba65b0ad0433500_20230424102207.png', '#', 4, 0, '2023-04-24 10:24:13', 0, '2023-04-24 10:24:13', 0);
+INSERT INTO `tb_bookstore_carousel` VALUES (5, 'http://localhost:8888/static/15de21c670ae7c3f6f3f1f37029303c9_20230424102418.png', 'https://book.douban.com/subject/26899059/', 5, 0, '2023-04-24 10:24:44', 0, '2023-04-24 10:24:44', 0);
+INSERT INTO `tb_bookstore_carousel` VALUES (6, 'http://localhost:8888/static/fae0b27c451c728867a567e8c1bb4e53_20230424102447.png', 'https://book.douban.com/subject/5253939/', 6, 0, '2023-04-24 10:25:29', 0, '2023-04-24 10:25:29', 0);
+
 
 /*!40000 ALTER TABLE `tb_bookstore_carousel` ENABLE KEYS */;
 UNLOCK TABLES;
