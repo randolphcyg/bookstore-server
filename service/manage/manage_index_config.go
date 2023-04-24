@@ -24,7 +24,7 @@ func (m *ManageIndexConfigService) CreateMallIndexConfig(req manageReq.MallIndex
 	if errors.Is(global.GVA_DB.Where("goods_id=?", req.GoodsId).First(&goodsInfo).Error, gorm.ErrRecordNotFound) {
 		return errors.New("商品不存在")
 	}
-	if errors.Is(global.GVA_DB.Where("config_type =? and goods_id=? and is_deleted=0", req.ConfigType, req.GoodsId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Where("config_type =? and goods_id=? and is_deleted=0", req.ConfigType, req.GoodsId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的首页配置项")
 	}
 	goodsId, _ := strconv.Atoi(req.GoodsId)

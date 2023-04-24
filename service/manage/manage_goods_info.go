@@ -71,7 +71,6 @@ func (m *ManageGoodsInfoService) ChangeMallGoodsInfoByIds(ids request.IdsReq, se
 // UpdateMallGoodsInfo 更新MallGoodsInfo记录
 func (m *ManageGoodsInfoService) UpdateMallGoodsInfo(req manageReq.GoodsInfoUpdateParam) (err error) {
 	goodsId, _ := strconv.Atoi(req.GoodsId)
-	originalPrice, _ := strconv.Atoi(req.OriginalPrice)
 	stockNum, _ := strconv.Atoi(req.StockNum)
 	goodsInfo := manage.MallGoodsInfo{
 		GoodsId:            goodsId,
@@ -80,7 +79,7 @@ func (m *ManageGoodsInfoService) UpdateMallGoodsInfo(req manageReq.GoodsInfoUpda
 		GoodsCategoryId:    req.GoodsCategoryId,
 		GoodsCoverImg:      req.GoodsCoverImg,
 		GoodsDetailContent: req.GoodsDetailContent,
-		OriginalPrice:      originalPrice,
+		OriginalPrice:      req.OriginalPrice,
 		SellingPrice:       req.SellingPrice,
 		StockNum:           stockNum,
 		Tag:                req.Tag,
