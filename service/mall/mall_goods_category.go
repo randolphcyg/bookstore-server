@@ -13,7 +13,6 @@ type MallGoodsCategoryService struct {
 }
 
 func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStoreIndexCategoryVOS []mallRes.BookStoreIndexCategoryVO) {
-
 	//获取一级分类的固定数量的数据
 	_, firstLevelCategories := selectByLevelAndParentIdsAndNumber([]int{0}, enum.LevelOne.Code(), 10)
 	if firstLevelCategories != nil {
@@ -97,7 +96,6 @@ func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStore
 
 // 获取分类数据
 func selectByLevelAndParentIdsAndNumber(ids []int, level int, limit int) (err error, categories []manage.MallGoodsCategory) {
-
 	global.GVA_DB.Where("parent_id in ? and category_level =? and is_deleted = 0", ids, level).
 		Order("category_rank desc").Limit(limit).Find(&categories)
 	return

@@ -18,11 +18,11 @@ type GoodsInfoAddParam struct {
 	GoodsCoverImg      string `json:"goodsCoverImg"`
 	GoodsCarousel      string `json:"goodsCarousel"`
 	GoodsDetailContent string `json:"goodsDetailContent"`
-	OriginalPrice      string `json:"originalPrice"`
-	SellingPrice       string `json:"sellingPrice"`
-	StockNum           string `json:"stockNum"`
+	OriginalPrice      int    `json:"originalPrice"`
+	SellingPrice       int    `json:"sellingPrice"`
+	StockNum           int    `json:"stockNum"`
 	Tag                string `json:"tag"`
-	GoodsSellStatus    string `json:"goodsSellStatus"`
+	GoodsSellStatus    int    `json:"goodsSellStatus"`
 }
 
 // GoodsInfoUpdateParam 更新商品信息的入参
@@ -36,7 +36,7 @@ type GoodsInfoUpdateParam struct {
 	GoodsDetailContent string          `json:"goodsDetailContent"`
 	OriginalPrice      int             `json:"originalPrice"`
 	SellingPrice       int             `json:"sellingPrice"`
-	StockNum           string          `json:"stockNum"`
+	StockNum           int             `json:"stockNum"`
 	Tag                string          `json:"tag"`
 	GoodsSellStatus    int             `json:"goodsSellStatus"`
 	UpdateUser         int             `json:"updateUser" form:"updateUser" gorm:"column:update_user;comment:修改者主键id;type:int"`

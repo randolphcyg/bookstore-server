@@ -13,9 +13,9 @@ type MallIndexConfigSearch struct {
 type MallIndexConfigAddParams struct {
 	ConfigName  string `json:"configName"`
 	ConfigType  int    `json:"configType"`
-	GoodsId     string `json:"goodsId"`
+	GoodsId     int    `json:"goodsId"`
 	RedirectUrl string `json:"redirectUrl"`
-	ConfigRank  string `json:"configRank"`
+	ConfigRank  int    `json:"configRank"`
 }
 
 type MallIndexConfigUpdateParams struct {
@@ -24,5 +24,5 @@ type MallIndexConfigUpdateParams struct {
 	RedirectUrl string `json:"redirectUrl"`
 	ConfigType  int    `json:"configType"`
 	GoodsId     int    `json:"goodsId"`
-	ConfigRank  string `json:"configRank"`
+	ConfigRank  int    `json:"configRank"`
 }

@@ -74,7 +74,7 @@ func (m *ManageGoodsInfoApi) FindGoodsInfo(c *gin.Context) {
 	}
 	goodsInfoRes := make(map[string]interface{})
 	goodsInfoRes["goods"] = goodsInfo
-	if _, thirdCategory := mallGoodsCategoryService.SelectCategoryById(goodsInfo.GoodsCategoryId); thirdCategory != (manage.MallGoodsCategory{}) {
+	if _, thirdCategory := mallGoodsCategoryService.SelectCategoryById(*goodsInfo.GoodsCategoryId); thirdCategory != (manage.MallGoodsCategory{}) {
 		goodsInfoRes["thirdCategory"] = thirdCategory
 		if _, secondCategory := mallGoodsCategoryService.SelectCategoryById(thirdCategory.ParentId); secondCategory != (manage.MallGoodsCategory{}) {
 			goodsInfoRes["secondCategory"] = secondCategory
@@ -92,7 +92,7 @@ func (m *ManageGoodsInfoApi) GetGoodsInfoList(c *gin.Context) {
 	var pageInfo manageReq.MallGoodsInfoSearch
 	_ = c.ShouldBindQuery(&pageInfo)
 	goodsName := c.Query("goodsName")
-	goodsSellStatus := c.Query("goodsSellStatus")
+	goodsSellStatus := c.GetInt("goodsSellStatus")
 	if err, list, total := mallGoodsInfoService.GetMallGoodsInfoInfoList(pageInfo, goodsName, goodsSellStatus); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)

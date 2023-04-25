@@ -2,7 +2,6 @@ package manage
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -27,14 +26,13 @@ func (m *ManageIndexConfigService) CreateMallIndexConfig(req manageReq.MallIndex
 	if !errors.Is(global.GVA_DB.Where("config_type =? and goods_id=? and is_deleted=0", req.ConfigType, req.GoodsId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的首页配置项")
 	}
-	goodsId, _ := strconv.Atoi(req.GoodsId)
-	configRank, _ := strconv.Atoi(req.ConfigRank)
+
 	mallIndexConfig := manage.MallIndexConfig{
 		ConfigName:  req.ConfigName,
 		ConfigType:  req.ConfigType,
-		GoodsId:     goodsId,
+		GoodsId:     req.GoodsId,
 		RedirectUrl: req.RedirectUrl,
-		ConfigRank:  configRank,
+		ConfigRank:  req.ConfigRank,
 		CreateTime:  common.JSONTime{Time: time.Now()},
 		UpdateTime:  common.JSONTime{Time: time.Now()},
 	}
@@ -61,14 +59,14 @@ func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndex
 	if errors.Is(global.GVA_DB.Where("config_id=?", req.ConfigId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("未查询到记录！")
 	}
-	configRank, _ := strconv.Atoi(req.ConfigRank)
+
 	mallIndexConfig := manage.MallIndexConfig{
 		ConfigId:    req.ConfigId,
 		ConfigType:  req.ConfigType,
 		ConfigName:  req.ConfigName,
 		RedirectUrl: req.RedirectUrl,
 		GoodsId:     req.GoodsId,
-		ConfigRank:  configRank,
+		ConfigRank:  req.ConfigRank,
 		UpdateTime:  common.JSONTime{Time: time.Now()},
 	}
 	if err = utils.Verify(mallIndexConfig, utils.IndexConfigUpdateParamVerify); err != nil {

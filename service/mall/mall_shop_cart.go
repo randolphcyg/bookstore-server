@@ -35,7 +35,7 @@ func (m *MallShopCartService) GetMyShoppingCartItems(token string) (err error, c
 	global.GVA_DB.Where("goods_id in ?", goodsIds).Find(&goodsInfos)
 	goodsMap := make(map[int]manage.MallGoodsInfo)
 	for _, goodsInfo := range goodsInfos {
-		goodsMap[goodsInfo.GoodsId] = goodsInfo
+		goodsMap[*goodsInfo.GoodsId] = goodsInfo
 	}
 	for _, v := range shopCartItems {
 		var cartItem mallRes.CartItemResponse
@@ -44,7 +44,7 @@ func (m *MallShopCartService) GetMyShoppingCartItems(token string) (err error, c
 			goodsInfo := goodsMap[v.GoodsId]
 			cartItem.GoodsName = goodsInfo.GoodsName
 			cartItem.GoodsCoverImg = goodsInfo.GoodsCoverImg
-			cartItem.SellingPrice = goodsInfo.SellingPrice
+			cartItem.SellingPrice = *goodsInfo.SellingPrice
 		}
 		cartItems = append(cartItems, cartItem)
 	}
@@ -166,7 +166,7 @@ func getMallShoppingCartItemVOS(cartItems []mall.MallShoppingCartItem) (err erro
 
 	bookStoreGoodsMap := make(map[int]manage.MallGoodsInfo)
 	for _, goodsInfo := range bookStoreGoods {
-		bookStoreGoodsMap[goodsInfo.GoodsId] = goodsInfo
+		bookStoreGoodsMap[*goodsInfo.GoodsId] = goodsInfo
 	}
 	for _, cartItem := range cartItems {
 		var cartItemRes mallRes.CartItemResponse
@@ -177,7 +177,7 @@ func getMallShoppingCartItemVOS(cartItems []mall.MallShoppingCartItem) (err erro
 			cartItemRes.GoodsCoverImg = bookStoreGoodsTemp.GoodsCoverImg
 			goodsName := utils.SubStrLen(bookStoreGoodsTemp.GoodsName, 28)
 			cartItemRes.GoodsName = goodsName
-			cartItemRes.SellingPrice = bookStoreGoodsTemp.SellingPrice
+			cartItemRes.SellingPrice = *bookStoreGoodsTemp.SellingPrice
 			cartItemsRes = append(cartItemsRes, cartItemRes)
 		}
 	}

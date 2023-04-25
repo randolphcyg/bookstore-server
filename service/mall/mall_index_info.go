@@ -29,11 +29,11 @@ func (m *MallIndexInfoService) GetConfigGoodsForIndex(configType int, num int) (
 	// 超出30个字符显示....
 	for _, indexGoods := range goodsList {
 		res := response.MallIndexConfigGoodsResponse{
-			GoodsId:       indexGoods.GoodsId,
+			GoodsId:       *indexGoods.GoodsId,
 			GoodsName:     utils.SubStrLen(indexGoods.GoodsName, 30),
 			GoodsIntro:    utils.SubStrLen(indexGoods.GoodsIntro, 30),
 			GoodsCoverImg: indexGoods.GoodsCoverImg,
-			SellingPrice:  indexGoods.SellingPrice,
+			SellingPrice:  *indexGoods.SellingPrice,
 			Tag:           indexGoods.Tag,
 		}
 		indexGoodsList = append(indexGoodsList, res)

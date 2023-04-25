@@ -13,7 +13,6 @@ import (
 	"bookstore/model/common/request"
 	"bookstore/model/manage"
 	manageReq "bookstore/model/manage/request"
-	"bookstore/utils"
 )
 
 type ManageGoodsInfoService struct {
@@ -29,27 +28,22 @@ func (m *ManageGoodsInfoService) CreateMallGoodsInfo(req manageReq.GoodsInfoAddP
 	if !errors.Is(global.GVA_DB.Where("goods_name=? AND goods_category_id=?", req.GoodsName, req.GoodsCategoryId).First(&manage.MallGoodsInfo{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的商品信息")
 	}
-	originalPrice, _ := strconv.Atoi(req.OriginalPrice)
-	sellingPrice, _ := strconv.Atoi(req.SellingPrice)
-	stockNum, _ := strconv.Atoi(req.StockNum)
-	goodsSellStatus, _ := strconv.Atoi(req.GoodsSellStatus)
+
 	goodsInfo := manage.MallGoodsInfo{
 		GoodsName:          req.GoodsName,
 		GoodsIntro:         req.GoodsIntro,
-		GoodsCategoryId:    req.GoodsCategoryId,
+		GoodsCategoryId:    &req.GoodsCategoryId,
 		GoodsCoverImg:      req.GoodsCoverImg,
 		GoodsDetailContent: req.GoodsDetailContent,
-		OriginalPrice:      originalPrice,
-		SellingPrice:       sellingPrice,
-		StockNum:           stockNum,
+		OriginalPrice:      &req.OriginalPrice,
+		SellingPrice:       &req.SellingPrice,
+		StockNum:           &req.StockNum,
 		Tag:                req.Tag,
-		GoodsSellStatus:    goodsSellStatus,
+		GoodsSellStatus:    req.GoodsSellStatus,
 		CreateTime:         common.JSONTime{Time: time.Now()},
 		UpdateTime:         common.JSONTime{Time: time.Now()},
 	}
-	if err = utils.Verify(goodsInfo, utils.GoodsAddParamVerify); err != nil {
-		return errors.New(err.Error())
-	}
+
 	err = global.GVA_DB.Create(&goodsInfo).Error
 	return err
 }
@@ -71,24 +65,21 @@ func (m *ManageGoodsInfoService) ChangeMallGoodsInfoByIds(ids request.IdsReq, se
 // UpdateMallGoodsInfo 更新MallGoodsInfo记录
 func (m *ManageGoodsInfoService) UpdateMallGoodsInfo(req manageReq.GoodsInfoUpdateParam) (err error) {
 	goodsId, _ := strconv.Atoi(req.GoodsId)
-	stockNum, _ := strconv.Atoi(req.StockNum)
 	goodsInfo := manage.MallGoodsInfo{
-		GoodsId:            goodsId,
+		GoodsId:            &goodsId,
 		GoodsName:          req.GoodsName,
 		GoodsIntro:         req.GoodsIntro,
-		GoodsCategoryId:    req.GoodsCategoryId,
+		GoodsCategoryId:    &req.GoodsCategoryId,
 		GoodsCoverImg:      req.GoodsCoverImg,
 		GoodsDetailContent: req.GoodsDetailContent,
-		OriginalPrice:      req.OriginalPrice,
-		SellingPrice:       req.SellingPrice,
-		StockNum:           stockNum,
+		OriginalPrice:      &req.OriginalPrice,
+		SellingPrice:       &req.SellingPrice,
+		StockNum:           &req.StockNum,
 		Tag:                req.Tag,
 		GoodsSellStatus:    req.GoodsSellStatus,
 		UpdateTime:         common.JSONTime{Time: time.Now()},
 	}
-	if err = utils.Verify(goodsInfo, utils.GoodsAddParamVerify); err != nil {
-		return errors.New(err.Error())
-	}
+
 	err = global.GVA_DB.Where("goods_id=?", goodsInfo.GoodsId).Updates(&goodsInfo).Error
 	return err
 }
@@ -100,7 +91,7 @@ func (m *ManageGoodsInfoService) GetMallGoodsInfo(id int) (err error, mallGoodsI
 }
 
 // GetMallGoodsInfoInfoList 分页获取MallGoodsInfo记录
-func (m *ManageGoodsInfoService) GetMallGoodsInfoInfoList(info manageReq.MallGoodsInfoSearch, goodsName string, goodsSellStatus string) (err error, list interface{}, total int64) {
+func (m *ManageGoodsInfoService) GetMallGoodsInfoInfoList(info manageReq.MallGoodsInfoSearch, goodsName string, goodsSellStatus int) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.PageNumber - 1)
 	// 创建db
@@ -114,9 +105,9 @@ func (m *ManageGoodsInfoService) GetMallGoodsInfoInfoList(info manageReq.MallGoo
 	if goodsName != "" {
 		db.Where("goods_name =?", goodsName)
 	}
-	if goodsSellStatus != "" {
-		db.Where("goods_sell_status =?", goodsSellStatus)
-	}
+
+	db.Where("goods_sell_status =?", goodsSellStatus)
+
 	err = db.Limit(limit).Offset(offset).Order("goods_id desc").Find(&mallGoodsInfos).Error
 	return err, mallGoodsInfos, total
 }

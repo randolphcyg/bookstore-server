@@ -42,7 +42,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 	}
 	bookStoreGoodsMap := make(map[int]manage.MallGoodsInfo)
 	for _, mallGoods := range bookStoreGoods {
-		bookStoreGoodsMap[mallGoods.GoodsId] = mallGoods
+		bookStoreGoodsMap[*mallGoods.GoodsId] = mallGoods
 	}
 	//判断商品库存
 	for _, shoppingCartItemVO := range myShoppingCartItems {
@@ -50,7 +50,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 		if _, ok := bookStoreGoodsMap[shoppingCartItemVO.GoodsId]; !ok {
 			return errors.New("购物车数据异常！"), orderNo
 		}
-		if shoppingCartItemVO.GoodsCount > bookStoreGoodsMap[shoppingCartItemVO.GoodsId].StockNum {
+		if shoppingCartItemVO.GoodsCount > *bookStoreGoodsMap[shoppingCartItemVO.GoodsId].StockNum {
 			return errors.New("库存不足！"), orderNo
 		}
 	}
@@ -62,7 +62,10 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 			for _, stockNumDTO := range stockNumDTOS {
 				var goodsInfo manage.MallGoodsInfo
 				global.GVA_DB.Where("goods_id =?", stockNumDTO.GoodsId).First(&goodsInfo)
-				if err = global.GVA_DB.Where("goods_id =? and stock_num>= ? and goods_sell_status = 0", stockNumDTO.GoodsId, stockNumDTO.GoodsCount).Updates(manage.MallGoodsInfo{StockNum: goodsInfo.StockNum - stockNumDTO.GoodsCount}).Error; err != nil {
+				tmp := *goodsInfo.StockNum - stockNumDTO.GoodsCount
+				if err = global.GVA_DB.Where("goods_id =? and stock_num>= ? and goods_sell_status = 0",
+					stockNumDTO.GoodsId, stockNumDTO.GoodsCount).Updates(
+					manage.MallGoodsInfo{StockNum: &tmp}).Error; err != nil {
 					return errors.New("库存不足！"), orderNo
 				}
 			}

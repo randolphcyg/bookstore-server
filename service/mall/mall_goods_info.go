@@ -40,11 +40,11 @@ func (m *MallGoodsInfoService) MallGoodsListBySearch(pageNumber int, goodsCatego
 	// 返回查询结果
 	for _, goods := range goodsList {
 		searchGoods := mallRes.GoodsSearchResponse{
-			GoodsId:       goods.GoodsId,
+			GoodsId:       *goods.GoodsId,
 			GoodsName:     utils.SubStrLen(goods.GoodsName, 28),
 			GoodsIntro:    utils.SubStrLen(goods.GoodsIntro, 28),
 			GoodsCoverImg: goods.GoodsCoverImg,
-			SellingPrice:  goods.SellingPrice,
+			SellingPrice:  *goods.SellingPrice,
 		}
 		searchGoodsList = append(searchGoodsList, searchGoods)
 	}
