@@ -22,6 +22,9 @@ type MallBooksInfo struct {
 	CreateTime         common.JSONTime `json:"createTime" form:"createTime" gorm:"column:create_time;comment:图书添加时间;type:datetime"`
 	UpdateUser         int             `json:"updateUser" form:"updateUser" gorm:"column:update_user;comment:修改者主键id;type:int"`
 	UpdateTime         common.JSONTime `json:"updateTime" form:"updateTime" gorm:"column:update_time;comment:图书修改时间;type:datetime"`
+	BooksPublish       string          `json:"booksPublish" form:"booksPublish" gorm:"column:books_publish;comment:出版社出版时间;type:varchar(200);"`
+	BooksAuthor        string          `json:"booksAuthor" form:"booksAuthor" gorm:"column:books_author;comment:图书作者;type:varchar(255);"`
+	BooksAuthorCountry string          `json:"booksAuthorCountry" form:"booksAuthorCountry" gorm:"column:books_author_country;comment:图书作者国籍;type:varchar(255);"`
 }
 
 // TableName MallBooksInfo 表名

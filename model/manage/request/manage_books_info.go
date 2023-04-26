@@ -13,6 +13,9 @@ type MallBooksInfoSearch struct {
 
 type BooksInfoAddParam struct {
 	BooksName          string `json:"booksName"`
+	BooksPublish       string `json:"booksPublish"`
+	BooksAuthor        string `json:"booksAuthor"`
+	BooksAuthorCountry string `json:"booksAuthorCountry"`
 	BooksIntro         string `json:"booksIntro"`
 	BooksCategoryId    int    `json:"booksCategoryId"`
 	BooksCoverImg      string `json:"booksCoverImg"`
@@ -29,6 +32,9 @@ type BooksInfoAddParam struct {
 type BooksInfoUpdateParam struct {
 	BooksId            string          `json:"booksId"`
 	BooksName          string          `json:"booksName"`
+	BooksPublish       string          `json:"booksPublish"`
+	BooksAuthor        string          `json:"booksAuthor"`
+	BooksAuthorCountry string          `json:"booksAuthorCountry"`
 	BooksIntro         string          `json:"booksIntro"`
 	BooksCategoryId    int             `json:"booksCategoryId"`
 	BooksCoverImg      string          `json:"booksCoverImg"`

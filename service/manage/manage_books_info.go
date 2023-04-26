@@ -31,6 +31,9 @@ func (m *ManageBooksInfoService) CreateMallBooksInfo(req manageReq.BooksInfoAddP
 
 	booksInfo := manage.MallBooksInfo{
 		BooksName:          req.BooksName,
+		BooksAuthor:        req.BooksAuthor,
+		BooksAuthorCountry: req.BooksAuthorCountry,
+		BooksPublish:       req.BooksPublish,
 		BooksIntro:         req.BooksIntro,
 		BooksCategoryId:    &req.BooksCategoryId,
 		BooksCoverImg:      req.BooksCoverImg,
@@ -68,6 +71,9 @@ func (m *ManageBooksInfoService) UpdateMallBooksInfo(req manageReq.BooksInfoUpda
 	booksInfo := manage.MallBooksInfo{
 		BooksId:            &booksId,
 		BooksName:          req.BooksName,
+		BooksAuthor:        req.BooksAuthor,
+		BooksAuthorCountry: req.BooksAuthorCountry,
+		BooksPublish:       req.BooksPublish,
 		BooksIntro:         req.BooksIntro,
 		BooksCategoryId:    &req.BooksCategoryId,
 		BooksCoverImg:      req.BooksCoverImg,
