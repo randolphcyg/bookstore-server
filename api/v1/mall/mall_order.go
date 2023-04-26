@@ -30,7 +30,7 @@ func (m *MallOrderApi) SaveOrder(c *gin.Context) {
 	} else {
 		//总价
 		for _, bookStoreShoppingCartItemVO := range itemsForSave {
-			priceTotal = priceTotal + bookStoreShoppingCartItemVO.GoodsCount*bookStoreShoppingCartItemVO.SellingPrice
+			priceTotal = priceTotal + bookStoreShoppingCartItemVO.BooksCount*bookStoreShoppingCartItemVO.SellingPrice
 		}
 		if priceTotal < 1 {
 			response.FailWithMessage("价格异常", c)

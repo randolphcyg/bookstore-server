@@ -10,16 +10,16 @@ import (
 	"bookstore/model/common/response"
 )
 
-type MallGoodsInfoApi struct {
+type MallBooksInfoApi struct {
 }
 
-// GoodsSearch 商品搜索
-func (m *MallGoodsInfoApi) GoodsSearch(c *gin.Context) {
+// BooksSearch 商品搜索
+func (m *MallBooksInfoApi) BooksSearch(c *gin.Context) {
 	pageNumber, _ := strconv.Atoi(c.Query("pageNumber"))
-	goodsCategoryId, _ := strconv.Atoi(c.Query("goodsCategoryId"))
+	booksCategoryId, _ := strconv.Atoi(c.Query("booksCategoryId"))
 	keyword := c.Query("keyword")
 	orderBy := c.Query("orderBy")
-	if err, list, total := mallGoodsInfoService.MallGoodsListBySearch(pageNumber, goodsCategoryId, keyword, orderBy); err != nil {
+	if err, list, total := mallBooksInfoService.MallBooksListBySearch(pageNumber, booksCategoryId, keyword, orderBy); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败"+err.Error(), c)
 	} else {
@@ -32,12 +32,12 @@ func (m *MallGoodsInfoApi) GoodsSearch(c *gin.Context) {
 	}
 }
 
-func (m *MallGoodsInfoApi) GoodsDetail(c *gin.Context) {
+func (m *MallBooksInfoApi) BooksDetail(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	err, goodsInfo := mallGoodsInfoService.GetMallGoodsInfo(id)
+	err, booksInfo := mallBooksInfoService.GetMallBooksInfo(id)
 	if err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败"+err.Error(), c)
 	}
-	response.OkWithData(goodsInfo, c)
+	response.OkWithData(booksInfo, c)
 }

@@ -6,9 +6,9 @@ type IndexConfigEnum int8
 const (
 	IndexSearchHots     IndexConfigEnum = 1
 	IndexSearchDownHots IndexConfigEnum = 2
-	IndexGoodsHot       IndexConfigEnum = 3
-	IndexGoodsNew       IndexConfigEnum = 4
-	IndexGoodsRecommond IndexConfigEnum = 5
+	IndexBooksHot       IndexConfigEnum = 3
+	IndexBooksNew       IndexConfigEnum = 4
+	IndexBooksRecommond IndexConfigEnum = 5
 )
 
 func (i IndexConfigEnum) Info() (int, string) {
@@ -17,11 +17,11 @@ func (i IndexConfigEnum) Info() (int, string) {
 		return 1, "INDEX_SEARCH_HOTS"
 	case IndexSearchDownHots:
 		return 2, "二级分类"
-	case IndexGoodsHot:
+	case IndexBooksHot:
 		return 3, "三级分类"
-	case IndexGoodsNew:
+	case IndexBooksNew:
 		return 4, "三级分类"
-	case IndexGoodsRecommond:
+	case IndexBooksRecommond:
 		return 5, "三级分类"
 	default:
 		return 0, "DEFAULT"
@@ -34,11 +34,11 @@ func (i IndexConfigEnum) Code() int {
 		return 1
 	case IndexSearchDownHots:
 		return 2
-	case IndexGoodsHot:
+	case IndexBooksHot:
 		return 3
-	case IndexGoodsNew:
+	case IndexBooksNew:
 		return 4
-	case IndexGoodsRecommond:
+	case IndexBooksRecommond:
 		return 5
 	default:
 		return 0

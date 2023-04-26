@@ -14,10 +14,10 @@ type MallOrderResponse struct {
 }
 
 type BookStoreOrderItemVO struct {
-	GoodsId       int    `json:"goodsId"`
-	GoodsName     string `json:"goodsName"`
-	GoodsCount    int    `json:"goodsCount"`
-	GoodsCoverImg string `json:"goodsCoverImg"`
+	BooksId       int    `json:"booksId"`
+	BooksName     string `json:"booksName"`
+	BooksCount    int    `json:"booksCount"`
+	BooksCoverImg string `json:"booksCoverImg"`
 	SellingPrice  int    `json:"sellingPrice"`
 }
 

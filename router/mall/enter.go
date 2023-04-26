@@ -2,9 +2,9 @@ package mall
 
 type MallRouterGroup struct {
 	MallCarouselIndexRouter
-	MallGoodsInfoIndexRouter
+	MallBooksInfoIndexRouter
 	MallUserRouter
-	MallGoodsCategoryIndexRouter
+	MallBooksCategoryIndexRouter
 	MallShopCartRouter
 	MallOrderRouter
 }

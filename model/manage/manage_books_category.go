@@ -4,7 +4,7 @@ import (
 	"bookstore/model/common"
 )
 
-type MallGoodsCategory struct {
+type MallBooksCategory struct {
 	CategoryId    int             `json:"categoryId"gorm:"primarykey;AUTO_INCREMENT"`
 	CategoryLevel int             `json:"categoryLevel" gorm:"comment:分类等级"`
 	ParentId      int             `json:"parentId" gorm:"comment:父类id"`
@@ -15,6 +15,6 @@ type MallGoodsCategory struct {
 	UpdateTime    common.JSONTime `json:"updateTime" gorm:"column:update_time;comment:修改时间;type:datetime"` // 更新时间
 }
 
-func (MallGoodsCategory) TableName() string {
-	return "tb_bookstore_goods_category"
+func (MallBooksCategory) TableName() string {
+	return "tb_bookstore_books_category"
 }

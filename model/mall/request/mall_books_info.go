@@ -1,8 +1,8 @@
 package request
 
-type GoodsSearchParams struct {
+type BooksSearchParams struct {
 	Keyword         string `form:"keyword"`
-	GoodsCategoryId int    `form:"goodsCategoryId"`
+	BooksCategoryId int    `form:"booksCategoryId"`
 	OrderBy         string `form:"orderBy"`
 	PageNumber      int    `form:"pageNumber"`
 }

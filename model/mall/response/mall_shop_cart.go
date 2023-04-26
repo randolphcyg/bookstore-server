@@ -3,13 +3,13 @@ package response
 type CartItemResponse struct {
 	CartItemId int `json:"cartItemId"`
 
-	GoodsId int `json:"goodsId"`
+	BooksId int `json:"booksId"`
 
-	GoodsCount int `json:"goodsCount"`
+	BooksCount int `json:"booksCount"`
 
-	GoodsName string `json:"goodsName"`
+	BooksName string `json:"booksName"`
 
-	GoodsCoverImg string `json:"goodsCoverImg"`
+	BooksCoverImg string `json:"booksCoverImg"`
 
 	SellingPrice int `json:"sellingPrice"`
 }

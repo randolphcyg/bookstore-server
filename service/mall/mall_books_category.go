@@ -9,10 +9,10 @@ import (
 	"bookstore/model/manage"
 )
 
-type MallGoodsCategoryService struct {
+type MallBooksCategoryService struct {
 }
 
-func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStoreIndexCategoryVOS []mallRes.BookStoreIndexCategoryVO) {
+func (m *MallBooksCategoryService) GetCategoriesForIndex() (err error, bookStoreIndexCategoryVOS []mallRes.BookStoreIndexCategoryVO) {
 	//获取一级分类的固定数量的数据
 	_, firstLevelCategories := selectByLevelAndParentIdsAndNumber([]int{0}, enum.LevelOne.Code(), 10)
 	if firstLevelCategories != nil {
@@ -31,9 +31,9 @@ func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStore
 			_, thirdLevelCategories := selectByLevelAndParentIdsAndNumber(secondLevelCategoryIds, enum.LevelThree.Code(), 0)
 			if thirdLevelCategories != nil {
 				//根据 parentId 将 thirdLevelCategories 分组
-				thirdLevelCategoryMap := make(map[int][]manage.MallGoodsCategory)
+				thirdLevelCategoryMap := make(map[int][]manage.MallBooksCategory)
 				for _, thirdLevelCategory := range thirdLevelCategories {
-					thirdLevelCategoryMap[thirdLevelCategory.ParentId] = []manage.MallGoodsCategory{}
+					thirdLevelCategoryMap[thirdLevelCategory.ParentId] = []manage.MallBooksCategory{}
 				}
 				for k, v := range thirdLevelCategoryMap {
 					for _, third := range thirdLevelCategories {
@@ -51,9 +51,9 @@ func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStore
 					//如果该二级分类下有数据则放入 secondLevelCategoryVOS 对象中
 					if _, ok := thirdLevelCategoryMap[secondLevelCategory.CategoryId]; ok {
 						//根据二级分类的id取出thirdLevelCategoryMap分组中的三级分类list
-						tempGoodsCategories := thirdLevelCategoryMap[secondLevelCategory.CategoryId]
+						tempBooksCategories := thirdLevelCategoryMap[secondLevelCategory.CategoryId]
 						var thirdLevelCategoryRes []mallRes.ThirdLevelCategoryVO
-						err = copier.Copy(&thirdLevelCategoryRes, &tempGoodsCategories)
+						err = copier.Copy(&thirdLevelCategoryRes, &tempBooksCategories)
 						secondLevelCategoryVO.ThirdLevelCategoryVOS = thirdLevelCategoryRes
 						secondLevelCategoryVOS = append(secondLevelCategoryVOS, secondLevelCategoryVO)
 					}
@@ -82,8 +82,8 @@ func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStore
 						//如果该一级分类下有数据则放入 bookStoreIndexCategoryVOS 对象中
 						if _, ok := secondLevelCategoryVOMap[firstCategory.CategoryId]; ok {
 							//根据一级分类的id取出secondLevelCategoryVOMap分组中的二级级分类list
-							tempGoodsCategories := secondLevelCategoryVOMap[firstCategory.CategoryId]
-							bookStoreIndexCategoryVO.SecondLevelCategoryVOS = tempGoodsCategories
+							tempBooksCategories := secondLevelCategoryVOMap[firstCategory.CategoryId]
+							bookStoreIndexCategoryVO.SecondLevelCategoryVOS = tempBooksCategories
 							bookStoreIndexCategoryVOS = append(bookStoreIndexCategoryVOS, bookStoreIndexCategoryVO)
 						}
 					}
@@ -95,7 +95,7 @@ func (m *MallGoodsCategoryService) GetCategoriesForIndex() (err error, bookStore
 }
 
 // 获取分类数据
-func selectByLevelAndParentIdsAndNumber(ids []int, level int, limit int) (err error, categories []manage.MallGoodsCategory) {
+func selectByLevelAndParentIdsAndNumber(ids []int, level int, limit int) (err error, categories []manage.MallBooksCategory) {
 	global.GVA_DB.Where("parent_id in ? and category_level =? and is_deleted = 0", ids, level).
 		Order("category_rank desc").Limit(limit).Find(&categories)
 	return

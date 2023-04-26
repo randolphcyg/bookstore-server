@@ -19,18 +19,18 @@ type ManageIndexConfigService struct {
 
 // CreateMallIndexConfig 创建MallIndexConfig记录
 func (m *ManageIndexConfigService) CreateMallIndexConfig(req manageReq.MallIndexConfigAddParams) (err error) {
-	var goodsInfo manage.MallGoodsInfo
-	if errors.Is(global.GVA_DB.Where("goods_id=?", req.GoodsId).First(&goodsInfo).Error, gorm.ErrRecordNotFound) {
+	var booksInfo manage.MallBooksInfo
+	if errors.Is(global.GVA_DB.Where("books_id=?", req.BooksId).First(&booksInfo).Error, gorm.ErrRecordNotFound) {
 		return errors.New("商品不存在")
 	}
-	if !errors.Is(global.GVA_DB.Where("config_type =? and goods_id=? and is_deleted=0", req.ConfigType, req.GoodsId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GVA_DB.Where("config_type =? and books_id=? and is_deleted=0", req.ConfigType, req.BooksId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的首页配置项")
 	}
 
 	mallIndexConfig := manage.MallIndexConfig{
 		ConfigName:  req.ConfigName,
 		ConfigType:  req.ConfigType,
-		GoodsId:     req.GoodsId,
+		BooksId:     req.BooksId,
 		RedirectUrl: req.RedirectUrl,
 		ConfigRank:  req.ConfigRank,
 		CreateTime:  common.JSONTime{Time: time.Now()},
@@ -53,7 +53,7 @@ func (m *ManageIndexConfigService) DeleteMallIndexConfig(ids request.IdsReq) (er
 // UpdateMallIndexConfig 更新MallIndexConfig记录
 func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndexConfigUpdateParams) (err error) {
 	//更新indexConfig
-	if errors.Is(global.GVA_DB.Where("goods_id = ?", req.GoodsId).First(&manage.MallGoodsInfo{}).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.GVA_DB.Where("books_id = ?", req.BooksId).First(&manage.MallBooksInfo{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("商品不存在！")
 	}
 	if errors.Is(global.GVA_DB.Where("config_id=?", req.ConfigId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
@@ -65,7 +65,7 @@ func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndex
 		ConfigType:  req.ConfigType,
 		ConfigName:  req.ConfigName,
 		RedirectUrl: req.RedirectUrl,
-		GoodsId:     req.GoodsId,
+		BooksId:     req.BooksId,
 		ConfigRank:  req.ConfigRank,
 		UpdateTime:  common.JSONTime{Time: time.Now()},
 	}
@@ -73,7 +73,7 @@ func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndex
 		return errors.New(err.Error())
 	}
 	var newIndexConfig manage.MallIndexConfig
-	err = global.GVA_DB.Where("config_type=? and goods_id=?", mallIndexConfig.ConfigType, mallIndexConfig.GoodsId).First(&newIndexConfig).Error
+	err = global.GVA_DB.Where("config_type=? and books_id=?", mallIndexConfig.ConfigType, mallIndexConfig.BooksId).First(&newIndexConfig).Error
 	if err != nil && newIndexConfig.ConfigId == mallIndexConfig.ConfigId {
 		return errors.New("已存在相同的首页配置项")
 	}

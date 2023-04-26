@@ -5,7 +5,7 @@ import (
 	"bookstore/model/common/request"
 )
 
-type MallGoodsCategoryReq struct {
+type MallBooksCategoryReq struct {
 	CategoryId    int             `json:"categoryId"`
 	CategoryLevel int             `json:"categoryLevel" `
 	ParentId      int             `json:"parentId"`

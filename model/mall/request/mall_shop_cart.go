@@ -9,11 +9,11 @@ type MallShopCartSearch struct {
 }
 
 type SaveCartItemParam struct {
-	GoodsCount int `json:"goodsCount"`
-	GoodsId    int `json:"goodsId"`
+	BooksCount int `json:"booksCount"`
+	BooksId    int `json:"booksId"`
 }
 
 type UpdateCartItemParam struct {
 	CartItemId int `json:"cartItemId"`
-	GoodsCount int `json:"goodsCount"`
+	BooksCount int `json:"booksCount"`
 }

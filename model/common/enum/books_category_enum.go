@@ -1,15 +1,15 @@
 package enum
 
-type GoodsCategoryLevel int8
+type BooksCategoryLevel int8
 
 const (
-	Default    GoodsCategoryLevel = 0
-	LevelOne   GoodsCategoryLevel = 1
-	LevelTwo   GoodsCategoryLevel = 2
-	LevelThree GoodsCategoryLevel = 3
+	Default    BooksCategoryLevel = 0
+	LevelOne   BooksCategoryLevel = 1
+	LevelTwo   BooksCategoryLevel = 2
+	LevelThree BooksCategoryLevel = 3
 )
 
-func (g GoodsCategoryLevel) Info() (int, string) {
+func (g BooksCategoryLevel) Info() (int, string) {
 	switch g {
 	case LevelOne:
 		return 1, "一级分类"
@@ -22,7 +22,7 @@ func (g GoodsCategoryLevel) Info() (int, string) {
 	}
 }
 
-func (g GoodsCategoryLevel) Code() int {
+func (g BooksCategoryLevel) Code() int {
 	switch g {
 	case LevelOne:
 		return 1

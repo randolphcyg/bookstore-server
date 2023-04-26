@@ -3,8 +3,8 @@ package mall
 type MallServiceGroup struct {
 	MallIndexInfoService
 	MallCarouselService
-	MallGoodsInfoService
-	MallGoodsCategoryService
+	MallBooksInfoService
+	MallBooksCategoryService
 	MallUserService
 	MallUserTokenService
 	MallUserAddressService

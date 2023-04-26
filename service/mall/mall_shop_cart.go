@@ -12,7 +12,6 @@ import (
 	mallReq "bookstore/model/mall/request"
 	mallRes "bookstore/model/mall/response"
 	"bookstore/model/manage"
-	"bookstore/utils"
 )
 
 type MallShopCartService struct {
@@ -22,29 +21,29 @@ type MallShopCartService struct {
 func (m *MallShopCartService) GetMyShoppingCartItems(token string) (err error, cartItems []mallRes.CartItemResponse) {
 	var userToken mall.MallUserToken
 	var shopCartItems []mall.MallShoppingCartItem
-	var goodsInfos []manage.MallGoodsInfo
+	var booksInfos []manage.MallBooksInfo
 	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), cartItems
 	}
 	global.GVA_DB.Where("user_id=? and is_deleted = 0", userToken.UserId).Find(&shopCartItems)
-	var goodsIds []int
+	var booksIds []int
 	for _, shopcartItem := range shopCartItems {
-		goodsIds = append(goodsIds, shopcartItem.GoodsId)
+		booksIds = append(booksIds, shopcartItem.BooksId)
 	}
-	global.GVA_DB.Where("goods_id in ?", goodsIds).Find(&goodsInfos)
-	goodsMap := make(map[int]manage.MallGoodsInfo)
-	for _, goodsInfo := range goodsInfos {
-		goodsMap[*goodsInfo.GoodsId] = goodsInfo
+	global.GVA_DB.Where("books_id in ?", booksIds).Find(&booksInfos)
+	booksMap := make(map[int]manage.MallBooksInfo)
+	for _, booksInfo := range booksInfos {
+		booksMap[*booksInfo.BooksId] = booksInfo
 	}
 	for _, v := range shopCartItems {
 		var cartItem mallRes.CartItemResponse
 		copier.Copy(&cartItem, &v)
-		if _, ok := goodsMap[v.GoodsId]; ok {
-			goodsInfo := goodsMap[v.GoodsId]
-			cartItem.GoodsName = goodsInfo.GoodsName
-			cartItem.GoodsCoverImg = goodsInfo.GoodsCoverImg
-			cartItem.SellingPrice = *goodsInfo.SellingPrice
+		if _, ok := booksMap[v.BooksId]; ok {
+			booksInfo := booksMap[v.BooksId]
+			cartItem.BooksName = booksInfo.BooksName
+			cartItem.BooksCoverImg = booksInfo.BooksCoverImg
+			cartItem.SellingPrice = *booksInfo.SellingPrice
 		}
 		cartItems = append(cartItems, cartItem)
 	}
@@ -53,11 +52,11 @@ func (m *MallShopCartService) GetMyShoppingCartItems(token string) (err error, c
 }
 
 func (m *MallShopCartService) SaveMallCartItem(token string, req mallReq.SaveCartItemParam) (err error) {
-	if req.GoodsCount < 1 {
+	if req.BooksCount < 1 {
 		return errors.New("商品数量不能小于 1 ！")
 
 	}
-	if req.GoodsCount > 5 {
+	if req.BooksCount > 5 {
 		return errors.New("超出单个商品的最大购买数量！")
 	}
 	var userToken mall.MallUserToken
@@ -67,11 +66,11 @@ func (m *MallShopCartService) SaveMallCartItem(token string, req mallReq.SaveCar
 	}
 	var shopCartItems []mall.MallShoppingCartItem
 	// 是否已存在商品
-	err = global.GVA_DB.Where("user_id = ? and goods_id = ? and is_deleted = 0", userToken.UserId, req.GoodsId).Find(&shopCartItems).Error
+	err = global.GVA_DB.Where("user_id = ? and books_id = ? and is_deleted = 0", userToken.UserId, req.BooksId).Find(&shopCartItems).Error
 	if err != nil {
 		return errors.New("已存在！无需重复添加！")
 	}
-	err = global.GVA_DB.Where("goods_id = ? ", req.GoodsId).First(&manage.MallGoodsInfo{}).Error
+	err = global.GVA_DB.Where("books_id = ? ", req.BooksId).First(&manage.MallBooksInfo{}).Error
 	if err != nil {
 		return errors.New(" 商品为空")
 	}
@@ -93,7 +92,7 @@ func (m *MallShopCartService) SaveMallCartItem(token string, req mallReq.SaveCar
 
 func (m *MallShopCartService) UpdateMallCartItem(token string, req mallReq.UpdateCartItemParam) (err error) {
 	//超出单个商品的最大数量
-	if req.GoodsCount > 5 {
+	if req.BooksCount > 5 {
 		return errors.New("超出单个商品的最大购买数量！")
 	}
 	var userToken mall.MallUserToken
@@ -108,7 +107,7 @@ func (m *MallShopCartService) UpdateMallCartItem(token string, req mallReq.Updat
 	if shopCartItem.UserId != userToken.UserId {
 		return errors.New("禁止该操作！")
 	}
-	shopCartItem.GoodsCount = req.GoodsCount
+	shopCartItem.BooksCount = req.BooksCount
 	shopCartItem.UpdateTime = common.JSONTime{time.Now()}
 	err = global.GVA_DB.Save(&shopCartItem).Error
 	return
@@ -147,37 +146,37 @@ func (m *MallShopCartService) GetCartItemsForSettle(token string, cartItemIds []
 	//购物车算价
 	priceTotal := 0
 	for _, cartItem := range cartItemRes {
-		priceTotal = priceTotal + cartItem.GoodsCount*cartItem.SellingPrice
+		priceTotal = priceTotal + cartItem.BooksCount*cartItem.SellingPrice
 	}
 	return
 }
 
 // 购物车数据转换
 func getMallShoppingCartItemVOS(cartItems []mall.MallShoppingCartItem) (err error, cartItemsRes []mallRes.CartItemResponse) {
-	var goodsIds []int
+	var booksIds []int
 	for _, cartItem := range cartItems {
-		goodsIds = append(goodsIds, cartItem.GoodsId)
+		booksIds = append(booksIds, cartItem.BooksId)
 	}
-	var bookStoreGoods []manage.MallGoodsInfo
-	err = global.GVA_DB.Where("goods_id in ?", goodsIds).Find(&bookStoreGoods).Error
+	var bookStoreBooks []manage.MallBooksInfo
+	err = global.GVA_DB.Where("books_id in ?", booksIds).Find(&bookStoreBooks).Error
 	if err != nil {
 		return
 	}
 
-	bookStoreGoodsMap := make(map[int]manage.MallGoodsInfo)
-	for _, goodsInfo := range bookStoreGoods {
-		bookStoreGoodsMap[*goodsInfo.GoodsId] = goodsInfo
+	bookStoreBooksMap := make(map[int]manage.MallBooksInfo)
+	for _, booksInfo := range bookStoreBooks {
+		bookStoreBooksMap[*booksInfo.BooksId] = booksInfo
 	}
 	for _, cartItem := range cartItems {
 		var cartItemRes mallRes.CartItemResponse
 		copier.Copy(&cartItemRes, &cartItem)
 		// 是否包含key
-		if _, ok := bookStoreGoodsMap[cartItemRes.GoodsId]; ok {
-			bookStoreGoodsTemp := bookStoreGoodsMap[cartItemRes.GoodsId]
-			cartItemRes.GoodsCoverImg = bookStoreGoodsTemp.GoodsCoverImg
-			goodsName := utils.SubStrLen(bookStoreGoodsTemp.GoodsName, 28)
-			cartItemRes.GoodsName = goodsName
-			cartItemRes.SellingPrice = *bookStoreGoodsTemp.SellingPrice
+		if _, ok := bookStoreBooksMap[cartItemRes.BooksId]; ok {
+			bookStoreBooksTemp := bookStoreBooksMap[cartItemRes.BooksId]
+			cartItemRes.BooksCoverImg = bookStoreBooksTemp.BooksCoverImg
+			booksName := bookStoreBooksTemp.BooksName
+			cartItemRes.BooksName = booksName
+			cartItemRes.SellingPrice = *bookStoreBooksTemp.SellingPrice
 			cartItemsRes = append(cartItemsRes, cartItemRes)
 		}
 	}

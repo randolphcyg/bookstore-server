@@ -19,26 +19,26 @@ func (m *MallIndexApi) MallIndexInfo(c *gin.Context) {
 		global.GVA_LOG.Error("轮播图获取失败"+err.Error(), zap.Error(err))
 		response.FailWithMessage("轮播图获取失败", c)
 	}
-	err, hotGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsHot.Code(), 4)
+	err, hotBooks := mallIndexConfigService.GetConfigBooksForIndex(enum.IndexBooksHot.Code(), 4)
 	if err != nil {
-		global.GVA_LOG.Error("热销商品获取失败"+err.Error(), zap.Error(err))
-		response.FailWithMessage("热销商品获取失败", c)
+		global.GVA_LOG.Error("热销图书获取失败"+err.Error(), zap.Error(err))
+		response.FailWithMessage("热销图书获取失败", c)
 	}
-	err, newGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsNew.Code(), 5)
+	err, newBooks := mallIndexConfigService.GetConfigBooksForIndex(enum.IndexBooksNew.Code(), 5)
 	if err != nil {
-		global.GVA_LOG.Error("新品获取失败"+err.Error(), zap.Error(err))
-		response.FailWithMessage("新品获取失败", c)
+		global.GVA_LOG.Error("新书获取失败"+err.Error(), zap.Error(err))
+		response.FailWithMessage("新书获取失败", c)
 	}
-	err, recommendGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsRecommond.Code(), 10)
+	err, recommendBooks := mallIndexConfigService.GetConfigBooksForIndex(enum.IndexBooksRecommond.Code(), 10)
 	if err != nil {
-		global.GVA_LOG.Error("推荐商品获取失败"+err.Error(), zap.Error(err))
-		response.FailWithMessage("推荐商品获取失败", c)
+		global.GVA_LOG.Error("推荐图书获取失败"+err.Error(), zap.Error(err))
+		response.FailWithMessage("推荐图书获取失败", c)
 	}
 	indexResult := make(map[string]interface{})
 	indexResult["carousels"] = mallCarouseInfo
-	indexResult["hotGoodses"] = hotGoodses
-	indexResult["newGoodses"] = newGoodses
-	indexResult["recommendGoodses"] = recommendGoodses
+	indexResult["hotBooks"] = hotBooks
+	indexResult["newBooks"] = newBooks
+	indexResult["recommendBooks"] = recommendBooks
 	response.OkWithData(indexResult, c)
 
 }

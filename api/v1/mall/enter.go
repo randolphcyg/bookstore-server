@@ -4,8 +4,8 @@ import "bookstore/service"
 
 type MallGroup struct {
 	MallIndexApi
-	MallGoodsInfoApi
-	MallGoodsCategoryApi
+	MallBooksInfoApi
+	MallBooksCategoryApi
 	MallUserApi
 	MallUserAddressApi
 	MallShopCartApi
@@ -13,9 +13,9 @@ type MallGroup struct {
 }
 
 var mallCarouselService = service.ServiceGroupApp.MallServiceGroup.MallCarouselService
-var mallGoodsInfoService = service.ServiceGroupApp.MallServiceGroup.MallGoodsInfoService
+var mallBooksInfoService = service.ServiceGroupApp.MallServiceGroup.MallBooksInfoService
 var mallIndexConfigService = service.ServiceGroupApp.MallServiceGroup.MallIndexInfoService
-var mallGoodsCategoryService = service.ServiceGroupApp.MallServiceGroup.MallGoodsCategoryService
+var mallBooksCategoryService = service.ServiceGroupApp.MallServiceGroup.MallBooksCategoryService
 var mallUserService = service.ServiceGroupApp.MallServiceGroup.MallUserService
 var mallUserTokenService = service.ServiceGroupApp.MallServiceGroup.MallUserTokenService
 var mallUserAddressService = service.ServiceGroupApp.MallServiceGroup.MallUserAddressService

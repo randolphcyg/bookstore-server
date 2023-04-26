@@ -1,10 +1,10 @@
 package response
 
-type MallIndexConfigGoodsResponse struct {
-	GoodsId       int    `json:"goodsId"`
-	GoodsName     string `json:"goodsName"`
-	GoodsIntro    string `json:"goodsIntro"`
-	GoodsCoverImg string `json:"goodsCoverImg"`
+type MallIndexConfigBooksResponse struct {
+	BooksId       int    `json:"booksId"`
+	BooksName     string `json:"booksName"`
+	BooksIntro    string `json:"booksIntro"`
+	BooksCoverImg string `json:"booksCoverImg"`
 	SellingPrice  int    `json:"sellingPrice"`
 	Tag           string `json:"tag"`
 }

@@ -27,45 +27,45 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 		return errors.New("不存在的用户"), orderNo
 	}
 	var itemIdList []int
-	var goodsIds []int
+	var booksIds []int
 	for _, cartItem := range myShoppingCartItems {
 		itemIdList = append(itemIdList, cartItem.CartItemId)
-		goodsIds = append(goodsIds, cartItem.GoodsId)
+		booksIds = append(booksIds, cartItem.BooksId)
 	}
-	var bookStoreGoods []manage.MallGoodsInfo
-	global.GVA_DB.Where("goods_id in ? ", goodsIds).Find(&bookStoreGoods)
+	var bookStoreBooks []manage.MallBooksInfo
+	global.GVA_DB.Where("books_id in ? ", booksIds).Find(&bookStoreBooks)
 	//检查是否包含已下架商品
-	for _, mallGoods := range bookStoreGoods {
-		if mallGoods.GoodsSellStatus != enum.GOODS_UNDER.Code() {
+	for _, mallBooks := range bookStoreBooks {
+		if mallBooks.BooksSellStatus != enum.BOOKS_UNDER.Code() {
 			return errors.New("已下架，无法生成订单"), orderNo
 		}
 	}
-	bookStoreGoodsMap := make(map[int]manage.MallGoodsInfo)
-	for _, mallGoods := range bookStoreGoods {
-		bookStoreGoodsMap[*mallGoods.GoodsId] = mallGoods
+	bookStoreBooksMap := make(map[int]manage.MallBooksInfo)
+	for _, mallBooks := range bookStoreBooks {
+		bookStoreBooksMap[*mallBooks.BooksId] = mallBooks
 	}
 	//判断商品库存
 	for _, shoppingCartItemVO := range myShoppingCartItems {
 		//查出的商品中不存在购物车中的这条关联商品数据，直接返回错误提醒
-		if _, ok := bookStoreGoodsMap[shoppingCartItemVO.GoodsId]; !ok {
+		if _, ok := bookStoreBooksMap[shoppingCartItemVO.BooksId]; !ok {
 			return errors.New("购物车数据异常！"), orderNo
 		}
-		if shoppingCartItemVO.GoodsCount > *bookStoreGoodsMap[shoppingCartItemVO.GoodsId].StockNum {
+		if shoppingCartItemVO.BooksCount > *bookStoreBooksMap[shoppingCartItemVO.BooksId].StockNum {
 			return errors.New("库存不足！"), orderNo
 		}
 	}
 	//删除购物项
-	if len(itemIdList) > 0 && len(goodsIds) > 0 {
+	if len(itemIdList) > 0 && len(booksIds) > 0 {
 		if err = global.GVA_DB.Where("cart_item_id in ?", itemIdList).Updates(mall.MallShoppingCartItem{IsDeleted: 1}).Error; err == nil {
 			var stockNumDTOS []manageReq.StockNumDTO
 			copier.Copy(&stockNumDTOS, &myShoppingCartItems)
 			for _, stockNumDTO := range stockNumDTOS {
-				var goodsInfo manage.MallGoodsInfo
-				global.GVA_DB.Where("goods_id =?", stockNumDTO.GoodsId).First(&goodsInfo)
-				tmp := *goodsInfo.StockNum - stockNumDTO.GoodsCount
-				if err = global.GVA_DB.Where("goods_id =? and stock_num>= ? and goods_sell_status = 0",
-					stockNumDTO.GoodsId, stockNumDTO.GoodsCount).Updates(
-					manage.MallGoodsInfo{StockNum: &tmp}).Error; err != nil {
+				var booksInfo manage.MallBooksInfo
+				global.GVA_DB.Where("books_id =?", stockNumDTO.BooksId).First(&booksInfo)
+				tmp := *booksInfo.StockNum - stockNumDTO.BooksCount
+				if err = global.GVA_DB.Where("books_id =? and stock_num>= ? and books_sell_status = 0",
+					stockNumDTO.BooksId, stockNumDTO.BooksCount).Updates(
+					manage.MallBooksInfo{StockNum: &tmp}).Error; err != nil {
 					return errors.New("库存不足！"), orderNo
 				}
 			}
@@ -78,7 +78,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 			bookStoreOrder.UserId = userToken.UserId
 			//总价
 			for _, bookStoreShoppingCartItemVO := range myShoppingCartItems {
-				priceTotal = priceTotal + bookStoreShoppingCartItemVO.GoodsCount*bookStoreShoppingCartItemVO.SellingPrice
+				priceTotal = priceTotal + bookStoreShoppingCartItemVO.BooksCount*bookStoreShoppingCartItemVO.SellingPrice
 			}
 			if priceTotal < 1 {
 				return errors.New("订单价格异常！"), orderNo
