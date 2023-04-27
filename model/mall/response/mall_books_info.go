@@ -22,7 +22,7 @@ type BooksInfoDetailResponse struct {
 	OriginalPrice           int                      `json:"originalPrice" `
 	Tag                     string                   `json:"tag" form:"tag" `
 	BooksCarouselList       []string                 `json:"booksCarouselList" `
-	BookStoreBookCommentVOS []BookStoreBookCommentVO `json:"bookStoreBookCommentVOS"`
+	BookStoreBookCommentVOS []BookStoreBookCommentVO `json:"comments"`
 }
 
 type BookStoreBookCommentVO struct {
