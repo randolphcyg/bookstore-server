@@ -13,7 +13,7 @@ import (
 type MallBooksInfoService struct {
 }
 
-// MallBooksListBySearch 商品搜索分页
+// MallBooksListBySearch 图书搜索分页
 func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCategoryId int, keyword string, orderBy string) (err error, searchBooksList []mallRes.BooksSearchResponse, total int64) {
 	// 根据搜索条件查询
 	var booksList []manage.MallBooksInfo
@@ -50,12 +50,12 @@ func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCatego
 	return
 }
 
-// GetMallBooksInfo 获取商品信息
+// GetMallBooksInfo 获取图书信息
 func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.BooksInfoDetailResponse) {
 	var mallBooksInfo manage.MallBooksInfo
 	err = global.GVA_DB.Where("books_id = ?", id).First(&mallBooksInfo).Error
 	if mallBooksInfo.BooksSellStatus != 0 {
-		return errors.New("商品已下架"), mallRes.BooksInfoDetailResponse{}
+		return errors.New("图书已下架"), mallRes.BooksInfoDetailResponse{}
 	}
 	err = copier.Copy(&res, &mallBooksInfo)
 	if err != nil {
@@ -64,6 +64,10 @@ func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.
 	var list []string
 	list = append(list, mallBooksInfo.BooksCarousel)
 	res.BooksCarouselList = list
+
+	var comments []manage.MallBooksComment
+	err = global.GVA_DB.Where("books_id = ?", id).Find(&comments).Error
+	err = copier.Copy(&res.BookStoreBookCommentVOS, &comments)
 
 	return
 }
