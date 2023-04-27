@@ -39,20 +39,18 @@ func (m *MallUserAddressService) SaveUserAddress(token string, req mallReq.AddAd
 	defaultAddress.UpdateTime = common.JSONTime{Time: time.Now()}
 	defaultAddress.UserId = userToken.UserId
 	if req.DefaultFlag == 1 {
-		global.GVA_DB.Where("user_id=? and default_flag =1 and is_deleted = 0", userToken.UserId).First(&defaultAddress)
-		if defaultAddress != (mall.MallUserAddress{}) {
-			defaultAddress.UpdateTime = common.JSONTime{Time: time.Now()}
-			err = global.GVA_DB.Save(&defaultAddress).Error
-			if err != nil {
-				return
-			}
-		}
-	} else {
-		err = global.GVA_DB.Create(&defaultAddress).Error
+		var tmpOriginDefaultAddress mall.MallUserAddress
+		err = global.GVA_DB.Where("user_id=? and default_flag =1 and is_deleted = 0", userToken.UserId).First(&tmpOriginDefaultAddress).Update("default_flag", 0).Error
 		if err != nil {
 			return
 		}
 	}
+
+	err = global.GVA_DB.Create(&defaultAddress).Error
+	if err != nil {
+		return
+	}
+
 	return
 }
 
