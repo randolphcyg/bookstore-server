@@ -71,6 +71,10 @@ func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.
 	err = global.GVA_DB.Where("books_id = ?", id).Find(&comments).Error
 	err = copier.Copy(&res.BookStoreBookCommentVOS, &comments)
 
+	for idx, comment := range res.BookStoreBookCommentVOS {
+		res.BookStoreBookCommentVOS[idx].Time = comment.CommentTime.Format("2006年1月2日 15:04:05")
+	}
+
 	return
 }
 

@@ -39,8 +39,10 @@ func (m *MallBooksInfoApi) BooksDetail(c *gin.Context) {
 	if err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败"+err.Error(), c)
+	} else {
+		response.OkWithData(booksInfo, c)
 	}
-	response.OkWithData(booksInfo, c)
+
 }
 
 func (m *MallBooksInfoApi) Comment(c *gin.Context) {
@@ -48,6 +50,7 @@ func (m *MallBooksInfoApi) Comment(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		response.FailWithMessage("参数错误"+err.Error(), c)
+		return
 	}
 
 	token := c.GetHeader("token")
@@ -64,6 +67,7 @@ func (m *MallBooksInfoApi) CommentReply(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		response.FailWithMessage("参数错误"+err.Error(), c)
+		return
 	}
 
 	token := c.GetHeader("token")
