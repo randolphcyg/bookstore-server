@@ -13,15 +13,12 @@ type BooksSearchParams struct {
 
 // CreateBookCommentParam 图书评论信息
 type CreateBookCommentParam struct {
-	BooksID     int64     `json:"booksId" `    //图书ID
-	Comment     string    `json:"comment"`     //评论内容
-	To          string    `json:"to" `         //父评论者姓名
-	ToId        int       `json:"toId"`        //父评论ID
-	Like        int       `json:"like" `       //赞成数量
-	CommentNum  int       `json:"commentNum" ` //子评论总数
-	CommentTime time.Time `json:"time" `       //评论发布时间
-	InputShow   bool      `json:"inputShow" `  //是否展示回复输入框
-	FromId      int64     `json:"fromId"`      //评论者ID
-	Name        string    `json:"name"`        //用户姓名
-	HeadImg     string    `json:"headImg"`     //用户头像
+	BooksID     int64     `json:"booksId"`   //图书ID
+	Comment     string    `json:"comment"`   //评论内容
+	To          string    `json:"to"`        //父评论者姓名
+	ToId        int       `json:"toId"`      //父评论ID
+	CommentTime time.Time `json:"time"`      //评论发布时间
+	InputShow   bool      `json:"inputShow"` //是否展示回复输入框
+	FromId      int64     `json:"fromId"`    //评论者ID
+	Name        string    `json:"name"`      //用户姓名
 }

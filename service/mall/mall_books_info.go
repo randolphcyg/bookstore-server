@@ -2,7 +2,6 @@ package mall
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/jinzhu/copier"
 
@@ -81,34 +80,38 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
-	fmt.Println(userToken.UserId, req)
+
+	var user manage.MallUser
+	err = global.GVA_DB.Where("user_id =?", userToken.UserId).First(&user).Error
+	if err != nil {
+		return errors.New("不存在的用户")
+	}
 
 	// 查询某个人所有的订单
 	var mallOrders []manage.MallOrder
-	if err = global.GVA_DB.Where("user_id=? and is_deleted = 0", userToken.UserId).First(&mallOrders).Error; err != nil {
+	if err = global.GVA_DB.Where("user_id=? and order_status = 4 and is_deleted = 0", userToken.UserId).Find(&mallOrders).Error; err != nil {
 		return errors.New("您未购买过该图书，无权评论！")
 	}
-	var bookIDs []int
+
+	bookIDs := make(map[int]struct{})
 	// 查询某个人所有的订单 中的所有书的ID
 	for _, o := range mallOrders {
 		var orderItems []manage.MallOrderItem
 		err = global.GVA_DB.Where("order_id = ?", o.OrderId).Find(&orderItems).Error
 		if len(orderItems) <= 0 {
-			return errors.New("您未购买过该图书，无权评论！")
+			continue
 		}
 
 		for _, b := range orderItems {
-			bookIDs = append(bookIDs, b.BooksId)
+			bookIDs[b.BooksId] = struct{}{}
 		}
 	}
 
 	// 判断此人是否买过此书
 	isPurchaseThisBook := false
-	for _, ID := range bookIDs {
-		if req.BooksID == int64(ID) {
-			isPurchaseThisBook = true
-			break
-		}
+	_, ok := bookIDs[int(req.BooksID)]
+	if ok {
+		isPurchaseThisBook = true
 	}
 
 	if !isPurchaseThisBook {
@@ -117,13 +120,10 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 
 	data := &manage.MallBooksComment{
 		FromId:      int64(userToken.UserId),
-		Name:        req.Name,
-		HeadImg:     req.HeadImg,
+		Name:        user.NickName,
 		Comment:     req.Comment,
 		To:          req.To,
 		ToId:        req.ToId,
-		Like:        req.Like,
-		CommentNum:  req.CommentNum,
 		CommentTime: req.CommentTime,
 		BooksId:     req.BooksID,
 		InputShow:   true,
