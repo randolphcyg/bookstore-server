@@ -8,6 +8,7 @@ import (
 
 	"bookstore/global"
 	"bookstore/model/common/response"
+	mallReq "bookstore/model/mall/request"
 )
 
 type MallBooksInfoApi struct {
@@ -40,4 +41,29 @@ func (m *MallBooksInfoApi) BooksDetail(c *gin.Context) {
 		response.FailWithMessage("查询失败"+err.Error(), c)
 	}
 	response.OkWithData(booksInfo, c)
+}
+
+func (m *MallBooksInfoApi) Comment(c *gin.Context) {
+	var req mallReq.CreateBookCommentParam
+	token := c.GetHeader("token")
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		response.FailWithMessage("参数错误"+err.Error(), c)
+	}
+	if err := mallUserService.CreateBookComment(token, req); err != nil {
+		global.GVA_LOG.Error("发布评论失败", zap.Error(err))
+		response.FailWithMessage("发布评论失败"+err.Error(), c)
+	} else {
+		response.OkWithMessage("发布评论成功", c)
+	}
+}
+
+func (m *MallBooksInfoApi) CommentReply(c *gin.Context) {
+	var req mallReq.CreateBookCommentParam
+	token := c.GetHeader("token")
+	if err := mallUserService.CreateBookComment(token, req); err != nil {
+		global.GVA_LOG.Error("回复评论失败", zap.Error(err))
+		response.FailWithMessage("回复评论失败"+err.Error(), c)
+	}
+	response.OkWithMessage("回复评论成功", c)
 }

@@ -27,6 +27,7 @@ type BooksInfoDetailResponse struct {
 
 type BookStoreBookCommentVO struct {
 	Id          int64     `json:"id"`          //评论ID
+	FromId      int64     `json:"fromId"`      //评论者ID
 	Name        string    `json:"name"`        //用户姓名
 	HeadImg     string    `json:"headImg"`     //用户头像
 	Comment     string    `json:"comment"`     //评论内容

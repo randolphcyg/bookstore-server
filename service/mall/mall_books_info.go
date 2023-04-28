@@ -2,10 +2,13 @@ package mall
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/copier"
 
 	"bookstore/global"
+	"bookstore/model/mall"
+	mallReq "bookstore/model/mall/request"
 	mallRes "bookstore/model/mall/response"
 	"bookstore/model/manage"
 )
@@ -70,4 +73,61 @@ func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.
 	err = copier.Copy(&res.BookStoreBookCommentVOS, &comments)
 
 	return
+}
+
+func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBookCommentParam) (err error) {
+	var userToken mall.MallUserToken
+	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	if err != nil {
+		return errors.New("不存在的用户")
+	}
+	fmt.Println(userToken.UserId, req)
+
+	// 查询某个人所有的订单
+	var mallOrders []manage.MallOrder
+	if err = global.GVA_DB.Where("user_id=? and is_deleted = 0", userToken.UserId).First(&mallOrders).Error; err != nil {
+		return errors.New("您未购买过该图书，无权评论！")
+	}
+	var bookIDs []int
+	// 查询某个人所有的订单 中的所有书的ID
+	for _, o := range mallOrders {
+		var orderItems []manage.MallOrderItem
+		err = global.GVA_DB.Where("order_id = ?", o.OrderId).Find(&orderItems).Error
+		if len(orderItems) <= 0 {
+			return errors.New("您未购买过该图书，无权评论！")
+		}
+
+		for _, b := range orderItems {
+			bookIDs = append(bookIDs, b.BooksId)
+		}
+	}
+
+	// 判断此人是否买过此书
+	isPurchaseThisBook := false
+	for _, ID := range bookIDs {
+		if req.BooksID == int64(ID) {
+			isPurchaseThisBook = true
+			break
+		}
+	}
+
+	if !isPurchaseThisBook {
+		return errors.New("您未购买过该图书，无权评论！")
+	}
+
+	data := &manage.MallBooksComment{
+		FromId:      int64(userToken.UserId),
+		Name:        req.Name,
+		HeadImg:     req.HeadImg,
+		Comment:     req.Comment,
+		To:          req.To,
+		ToId:        req.ToId,
+		Like:        req.Like,
+		CommentNum:  req.CommentNum,
+		CommentTime: req.CommentTime,
+		BooksId:     req.BooksID,
+		InputShow:   true,
+	}
+
+	return global.GVA_DB.Create(data).Error
 }

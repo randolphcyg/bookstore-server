@@ -11,7 +11,7 @@
  Target Server Version : 50740 (5.7.40-log)
  File Encoding         : 65001
 
- Date: 27/04/2023 17:00:43
+ Date: 28/04/2023 11:31:49
 */
 
 SET NAMES utf8mb4;
@@ -116,8 +116,8 @@ INSERT INTO `tb_bookstore_books_category` VALUES (37, 3, 20, 'web开发', 1, 0, 
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_bookstore_books_comment`;
 CREATE TABLE `tb_bookstore_books_comment`  (
-                                               `id` bigint(20) NOT NULL COMMENT '评论ID',
-                                               `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户姓名',
+                                               `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+                                               `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '评论者姓名',
                                                `head_img` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户头像',
                                                `comment` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论内容',
                                                `to` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父评论者姓名',
@@ -127,14 +127,15 @@ CREATE TABLE `tb_bookstore_books_comment`  (
                                                `comment_time` datetime NULL DEFAULT NULL COMMENT '评论发布时间',
                                                `books_id` bigint(20) NOT NULL COMMENT '图书ID',
                                                `input_show` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否展示回复输入框',
+                                               `from_id` int(20) NULL DEFAULT NULL COMMENT '评论者ID',
                                                PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookstore_books_comment
 -- ----------------------------
-INSERT INTO `tb_bookstore_books_comment` VALUES (1, '小五', NULL, '这本书很不错！', NULL, -1, NULL, NULL, '2023-04-27 14:37:46', 666, 1);
-INSERT INTO `tb_bookstore_books_comment` VALUES (2, '小红', NULL, '没错 我也看了hah', '小五', 1, NULL, NULL, '2023-04-27 14:38:51', 666, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (1, '小五', NULL, '这本书很不错！', NULL, -1, NULL, NULL, '2023-04-27 14:37:46', 666, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (2, '小红', NULL, '没错 我也看了hah', '小五', 1, NULL, NULL, '2023-04-27 14:38:51', 666, 1, 3);
 
 -- ----------------------------
 -- Table structure for tb_bookstore_books_info
@@ -275,7 +276,7 @@ CREATE TABLE `tb_bookstore_order_item`  (
                                             `books_count` int(11) NOT NULL DEFAULT 1 COMMENT '数量(订单快照)',
                                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                             PRIMARY KEY (`order_item_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单收货地址关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单图书明细关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_bookstore_order_item
