@@ -11,7 +11,7 @@
  Target Server Version : 50740 (5.7.40-log)
  File Encoding         : 65001
 
- Date: 28/04/2023 16:37:23
+ Date: 04/05/2023 14:09:29
 */
 
 SET NAMES utf8mb4;
@@ -121,24 +121,25 @@ CREATE TABLE `tb_bookstore_books_comment`  (
                                                `head_img` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户头像',
                                                `comment` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论内容',
                                                `to` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父评论者姓名',
-                                               `to_id` int(20) NOT NULL COMMENT '父评论ID 考虑用哪个字段',
+                                               `to_id` bigint(20) NOT NULL COMMENT '父评论ID 考虑用哪个字段',
                                                `like` int(20) NULL DEFAULT NULL COMMENT '赞成数量',
                                                `comment_num` int(20) NULL DEFAULT NULL COMMENT '子评论总数',
                                                `comment_time` datetime NULL DEFAULT NULL COMMENT '评论发布时间',
                                                `books_id` bigint(20) NOT NULL COMMENT '图书ID',
                                                `input_show` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否展示回复输入框',
-                                               `from_id` int(20) NOT NULL COMMENT '评论者ID',
+                                               `from_id` bigint(20) NOT NULL COMMENT '评论者ID',
                                                PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1683176881935589601 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookstore_books_comment
 -- ----------------------------
 INSERT INTO `tb_bookstore_books_comment` VALUES (1, '小五', NULL, '这本书很不错！', NULL, -1, NULL, NULL, '2023-04-27 14:37:46', 666, 1, 1);
 INSERT INTO `tb_bookstore_books_comment` VALUES (2, '小红', NULL, '没错 我也看了hah', '小五', 1, NULL, NULL, '2023-04-27 14:38:51', 666, 1, 3);
-INSERT INTO `tb_bookstore_books_comment` VALUES (3, '', '', '大大棒棒', '', -1, 0, 0, '2023-04-28 19:33:14', 777, 1, 1);
-INSERT INTO `tb_bookstore_books_comment` VALUES (4, '王小五', '', '刚收到 看完回评', '', -1, 0, 0, '2023-04-28 23:45:34', 792, 1, 1);
-INSERT INTO `tb_bookstore_books_comment` VALUES (5, '王小五', '', '萨达', '', -1, 0, 0, '2023-04-29 00:28:33', 792, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (3, '王小五', '', '大大棒棒', '', -1, 0, 0, '2023-04-28 19:33:14', 777, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (1683176466774422200, '王小五', '', '刚收到 看完回评', '王小五', -1, 0, 0, '2023-04-28 23:45:34', 792, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (1683176466774424300, '王小五', '', '+2', '王小五', 1683176466774422200, 0, 0, '2023-05-04 13:01:07', 792, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (1683176881935589600, '王小五', '', '+3', '王小五', 1683176466774422200, 0, 0, '2023-05-04 13:08:02', 792, 1, 1);
 
 -- ----------------------------
 -- Table structure for tb_bookstore_books_info
@@ -195,7 +196,7 @@ CREATE TABLE `tb_bookstore_carousel`  (
                                           `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
                                           `update_user` int(11) NOT NULL DEFAULT 0 COMMENT '修改者id',
                                           PRIMARY KEY (`carousel_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '首页轮播图信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '首页轮播图信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_bookstore_carousel
@@ -388,6 +389,6 @@ CREATE TABLE `tb_bookstore_user_token`  (
 -- ----------------------------
 -- Records of tb_bookstore_user_token
 -- ----------------------------
-INSERT INTO `tb_bookstore_user_token` VALUES (1, '4457fb14e4215e9438b93b44bb0d8da8', '2023-04-27 09:15:09', '2023-04-29 09:15:09');
+INSERT INTO `tb_bookstore_user_token` VALUES (1, 'fe60393b30fd00cc878392d1e639f57f', '2023-05-04 08:51:18', '2023-05-06 08:51:18');
 
 SET FOREIGN_KEY_CHECKS = 1;

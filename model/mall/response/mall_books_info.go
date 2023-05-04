@@ -32,7 +32,7 @@ type BookStoreBookCommentVO struct {
 	HeadImg     string         `json:"headImg"`    //用户头像
 	Comment     string         `json:"comment"`    //评论内容
 	To          string         `json:"to"`         //父评论者姓名
-	ToId        int            `json:"toId"`       //父评论ID 考虑用哪个字段
+	ToId        int64          `json:"toId"`       //父评论ID 考虑用哪个字段
 	Like        int            `json:"like"`       //赞成数量
 	CommentNum  int            `json:"commentNum"` //子评论总数
 	CommentTime time.Time      `json:"_"`          //评论发布时间
@@ -49,7 +49,7 @@ type CommentReply struct {
 	HeadImg     string    `json:"headImg"`    //用户头像
 	Comment     string    `json:"comment"`    //评论内容
 	To          string    `json:"to"`         //父评论者姓名
-	ToId        int       `json:"toId"`       //父评论ID 考虑用哪个字段
+	ToId        int64     `json:"toId"`       //父评论ID 考虑用哪个字段
 	Like        int       `json:"like"`       //赞成数量
 	CommentNum  int       `json:"commentNum"` //子评论总数
 	CommentTime time.Time `json:"_"`          //评论发布时间

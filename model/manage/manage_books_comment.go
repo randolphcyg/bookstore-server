@@ -12,7 +12,7 @@ type MallBooksComment struct {
 	HeadImg     string    `json:"headImg" gorm:"column:head_img" db:"head_img" form:"head_img"`             //用户头像
 	Comment     string    `json:"comment" gorm:"column:comment" db:"comment" form:"comment"`                //评论内容
 	To          string    `json:"to" gorm:"column:to" db:"to" form:"to"`                                    //父评论者姓名
-	ToId        int       `json:"toId" gorm:"column:to_id" db:"to_id" form:"to_id"`                         //父评论ID 考虑用哪个字段
+	ToId        int64     `json:"toId" gorm:"column:to_id" db:"to_id" form:"to_id"`                         //父评论ID 考虑用哪个字段
 	Like        int       `json:"like" gorm:"column:like" db:"like" form:"like"`                            //赞成数量
 	CommentNum  int       `json:"commentNum" gorm:"column:comment_num" db:"comment_num" form:"comment_num"` //子评论总数
 	CommentTime time.Time `json:"time" gorm:"column:comment_time" db:"comment_time" form:"comment_time"`    //评论发布时间
