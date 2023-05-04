@@ -70,10 +70,10 @@ func (m *MallOrderApi) CancelOrder(c *gin.Context) {
 	orderNo := c.Param("orderNo")
 	token := c.GetHeader("token")
 	if err := mallOrderService.CancelOrder(token, orderNo); err != nil {
-		global.GVA_LOG.Error("订单签收失败", zap.Error(err))
-		response.FailWithMessage("订单签收失败:"+err.Error(), c)
+		global.GVA_LOG.Error("订单取消失败", zap.Error(err))
+		response.FailWithMessage("订单取消失败:"+err.Error(), c)
 	}
-	response.OkWithMessage("订单签收成功", c)
+	response.OkWithMessage("订单取消成功", c)
 
 }
 func (m *MallOrderApi) OrderDetailPage(c *gin.Context) {
