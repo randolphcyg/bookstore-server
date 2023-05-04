@@ -11,7 +11,7 @@
  Target Server Version : 50740 (5.7.40-log)
  File Encoding         : 65001
 
- Date: 04/05/2023 14:09:29
+ Date: 04/05/2023 14:30:04
 */
 
 SET NAMES utf8mb4;
@@ -129,7 +129,7 @@ CREATE TABLE `tb_bookstore_books_comment`  (
                                                `input_show` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否展示回复输入框',
                                                `from_id` bigint(20) NOT NULL COMMENT '评论者ID',
                                                PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1683176881935589601 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1683181211795201001 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '图书评论' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookstore_books_comment
@@ -140,6 +140,7 @@ INSERT INTO `tb_bookstore_books_comment` VALUES (3, '王小五', '', '大大棒�
 INSERT INTO `tb_bookstore_books_comment` VALUES (1683176466774422200, '王小五', '', '刚收到 看完回评', '王小五', -1, 0, 0, '2023-04-28 23:45:34', 792, 1, 1);
 INSERT INTO `tb_bookstore_books_comment` VALUES (1683176466774424300, '王小五', '', '+2', '王小五', 1683176466774422200, 0, 0, '2023-05-04 13:01:07', 792, 1, 1);
 INSERT INTO `tb_bookstore_books_comment` VALUES (1683176881935589600, '王小五', '', '+3', '王小五', 1683176466774422200, 0, 0, '2023-05-04 13:08:02', 792, 1, 1);
+INSERT INTO `tb_bookstore_books_comment` VALUES (1683181211795201000, '王小五', '', '测试评论', '', -1, 0, 0, '2023-05-04 14:20:12', 792, 1, 1);
 
 -- ----------------------------
 -- Table structure for tb_bookstore_books_info
