@@ -34,6 +34,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 	}
 	var bookStoreBooks []manage.MallBooksInfo
 	global.GVA_DB.Where("books_id in ? ", booksIds).Find(&bookStoreBooks)
+
 	//检查是否包含已下架商品
 	for _, mallBooks := range bookStoreBooks {
 		if mallBooks.BooksSellStatus != enum.BOOKS_UNDER.Code() {
@@ -44,6 +45,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 	for _, mallBooks := range bookStoreBooks {
 		bookStoreBooksMap[*mallBooks.BooksId] = mallBooks
 	}
+
 	//判断商品库存
 	for _, shoppingCartItemVO := range myShoppingCartItems {
 		//查出的商品中不存在购物车中的这条关联商品数据，直接返回错误提醒
@@ -54,6 +56,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 			return errors.New("库存不足！"), orderNo
 		}
 	}
+
 	//删除购物项
 	if len(itemIdList) > 0 && len(booksIds) > 0 {
 		if err = global.GVA_DB.Where("cart_item_id in ?", itemIdList).Updates(mall.MallShoppingCartItem{IsDeleted: 1}).Error; err == nil {
@@ -87,6 +90,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 			bookStoreOrder.UpdateTime = common.JSONTime{Time: time.Now()}
 			bookStoreOrder.TotalPrice = priceTotal
 			bookStoreOrder.ExtraInfo = ""
+			bookStoreOrder.AddressId = userAddress.AddressId
 			//生成订单项并保存订单项纪录
 			if err = global.GVA_DB.Save(&bookStoreOrder).Error; err != nil {
 				return errors.New("订单入库失败！"), orderNo
