@@ -133,6 +133,19 @@ func (m *ManageAdminUserApi) LockUser(c *gin.Context) {
 	}
 }
 
+// LockUser 用户删除与恢复(0-恢复 1-已删除)
+func (m *ManageAdminUserApi) DelUser(c *gin.Context) {
+	lockStatus, _ := strconv.Atoi(c.Param("delStatus"))
+	var IDS request.IdsReq
+	_ = c.ShouldBindJSON(&IDS)
+	if err := mallUserService.DelUser(IDS, lockStatus); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
 // UploadFile 上传单图
 // 此处上传图片的功能可用，但是原前端项目的图片链接为服务器地址，如需要显示图片，需要修改前端指向的图片链接
 func (m *ManageAdminUserApi) UploadFile(c *gin.Context) {

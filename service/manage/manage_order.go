@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"bookstore/model/mall"
+
 	"github.com/jinzhu/copier"
 
 	"bookstore/global"
@@ -106,6 +108,24 @@ func (m *ManageOrderService) GetMallOrder(id string) (err error, bookStoreOrderD
 	if err = global.GVA_DB.Where("order_id = ?", bookStoreOrder.OrderId).Find(&orderItems).Error; err != nil {
 		return
 	}
+	var userAddress mall.MallUserAddress
+	if err = global.GVA_DB.Where("address_id =?", bookStoreOrder.AddressId).First(&userAddress).Error; err != nil {
+		err = errors.New("不存在的用户地址")
+		return
+	}
+
+	bookStoreOrderDetailVO.BookStoreOrderAddressVOS = manageRes.BookStoreOrderAddressVO{
+		AddressId:     userAddress.AddressId,
+		UserId:        userAddress.UserId,
+		UserName:      userAddress.UserName,
+		UserPhone:     userAddress.UserPhone,
+		DefaultFlag:   userAddress.DefaultFlag,
+		ProvinceName:  userAddress.ProvinceName,
+		CityName:      userAddress.CityName,
+		RegionName:    userAddress.RegionName,
+		DetailAddress: userAddress.DetailAddress,
+	}
+
 	//获取订单项数据
 	if len(orderItems) > 0 {
 		var bookStoreOrderItemVOS []manageRes.BookStoreOrderItemVO
@@ -118,6 +138,7 @@ func (m *ManageOrderService) GetMallOrder(id string) (err error, bookStoreOrderD
 		bookStoreOrderDetailVO.PayTypeString = payTapStr
 		bookStoreOrderDetailVO.BookStoreOrderItemVOS = bookStoreOrderItemVOS
 	}
+
 	return
 }
 

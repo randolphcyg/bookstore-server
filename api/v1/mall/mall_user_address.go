@@ -81,5 +81,4 @@ func (m *MallUserAddressApi) DeleteUserAddress(c *gin.Context) {
 		response.FailWithMessage("删除用户地址失败:"+err.Error(), c)
 	}
 	response.OkWithMessage("删除用户地址成功", c)
-
 }

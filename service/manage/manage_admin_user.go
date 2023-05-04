@@ -99,7 +99,6 @@ func (m *ManageAdminUserService) AdminLogin(params manageReq.MallAdminLoginParam
 		}
 	}
 	return err, mallAdminUser, adminToken
-
 }
 
 func getNewToken(timeInt int64, userId int) (token string) {

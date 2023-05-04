@@ -127,6 +127,6 @@ func (m *MallUserAddressService) DeleteUserAddress(token string, id int) (err er
 		return errors.New("禁止该操作！")
 	}
 	err = global.GVA_DB.Delete(&userAddress).Error
-	return
 
+	return
 }

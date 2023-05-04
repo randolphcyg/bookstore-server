@@ -22,6 +22,16 @@ func (m *ManageUserService) LockUser(idReq request.IdsReq, lockStatus int) (err 
 	return err
 }
 
+// DelUser 修改用户状态
+func (m *ManageUserService) DelUser(idReq request.IdsReq, delStatus int) (err error) {
+	if delStatus != 0 && delStatus != 1 {
+		return errors.New("操作非法！")
+	}
+	//更新字段为0时，不能直接UpdateColumns
+	err = global.GVA_DB.Model(&manage.MallUser{}).Where("user_id in ?", idReq.Ids).Update("is_deleted", delStatus).Error
+	return err
+}
+
 // GetMallUserInfoList 分页获取商城注册用户列表
 func (m *ManageUserService) GetMallUserInfoList(info manageReq.MallUserSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize

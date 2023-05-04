@@ -40,5 +40,4 @@ func (m *MallIndexApi) MallIndexInfo(c *gin.Context) {
 	indexResult["newBooks"] = newBooks
 	indexResult["recommendBooks"] = recommendBooks
 	response.OkWithData(indexResult, c)
-
 }

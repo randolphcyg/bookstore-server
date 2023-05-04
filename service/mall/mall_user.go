@@ -70,8 +70,13 @@ func (m *MallUserService) GetUserDetail(token string) (err error, userDetail mal
 
 func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, user mall.MallUser, userToken mall.MallUserToken) {
 	err = global.GVA_DB.Where("login_name=? AND password_md5=?", params.LoginName, params.PasswordMd5).First(&user).Error
+	if user.LockedFlag == 1 || user.IsDeleted == 1 {
+		err = errors.New("该用户已禁用或删除！")
+		return
+	}
+
 	if user != (mall.MallUser{}) {
-		token := getNewToken(time.Now().UnixNano()/1e6, int(user.UserId))
+		token := getNewToken(time.Now().UnixNano()/1e6, user.UserId)
 		global.GVA_DB.Where("user_id", user.UserId).First(&token)
 		nowDate := time.Now()
 		// 48小时过期
@@ -95,6 +100,7 @@ func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, u
 			}
 		}
 	}
+
 	return err, user, userToken
 }
 

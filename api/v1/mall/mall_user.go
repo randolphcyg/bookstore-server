@@ -51,7 +51,7 @@ func (m *MallUserApi) UserLogin(c *gin.Context) {
 	var req mallReq.UserLoginParam
 	_ = c.ShouldBindJSON(&req)
 	if err, _, adminToken := mallUserService.UserLogin(req); err != nil {
-		response.FailWithMessage("用户登陆失败！", c)
+		response.FailWithMessage("用户登陆失败！"+err.Error(), c)
 	} else {
 		response.OkWithData(adminToken.Token, c)
 	}
