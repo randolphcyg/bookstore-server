@@ -2,6 +2,7 @@ package mall
 
 import (
 	"errors"
+	"time"
 
 	"github.com/jinzhu/copier"
 
@@ -69,10 +70,52 @@ func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.
 
 	var comments []manage.MallBooksComment
 	err = global.GVA_DB.Where("books_id = ?", id).Find(&comments).Error
-	err = copier.Copy(&res.BookStoreBookCommentVOS, &comments)
+	res.BookStoreBookCommentVOS, err = handleComments(comments)
 
-	for idx, comment := range res.BookStoreBookCommentVOS {
-		res.BookStoreBookCommentVOS[idx].Time = comment.CommentTime.Format("2006年1月2日 15:04:05")
+	return
+}
+
+// 将图书评论组装成前端可接受的格式
+func handleComments(comments []manage.MallBooksComment) (topComments []mallRes.BookStoreBookCommentVO, err error) {
+	// 第一遍处理最上层评论
+	for _, comment := range comments {
+		// 若是最上层的评论
+		if comment.ToId == -1 {
+			topComments = append(topComments, mallRes.BookStoreBookCommentVO{
+				Id:          comment.Id,
+				FromId:      comment.FromId,
+				Name:        comment.Name,
+				Comment:     comment.Comment,
+				To:          comment.To,
+				ToId:        comment.ToId,
+				CommentTime: comment.CommentTime,
+				Time:        comment.CommentTime.Format("2006年1月2日 15:04:05"),
+				BooksId:     comment.BooksId,
+				InputShow:   true,
+				Reply:       nil,
+			})
+		}
+	}
+
+	// 第二遍处理评论回复 不支持三层评论
+	for idx, topComment := range topComments {
+		for _, reply := range comments {
+			if topComment.Id == int64(reply.ToId) {
+				topComment.Reply = append(topComment.Reply, mallRes.CommentReply{
+					Id:          reply.Id,
+					FromId:      reply.FromId,
+					Name:        reply.Name,
+					Comment:     reply.Comment,
+					To:          reply.To,
+					ToId:        reply.ToId,
+					CommentTime: reply.CommentTime,
+					Time:        reply.CommentTime.Format("2006年1月2日 15:04:05"),
+					BooksId:     reply.BooksId,
+					InputShow:   true,
+				})
+				topComments[idx] = topComment
+			}
+		}
 	}
 
 	return
@@ -123,6 +166,7 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 	}
 
 	data := &manage.MallBooksComment{
+		Id:          time.Now().UnixNano(),
 		FromId:      int64(userToken.UserId),
 		Name:        user.NickName,
 		Comment:     req.Comment,

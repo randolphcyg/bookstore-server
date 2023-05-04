@@ -6,7 +6,7 @@ import (
 
 // MallBooksComment 图书评论表
 type MallBooksComment struct {
-	Id          int64     `json:"id" gorm:"column:id" db:"id" form:"id"`                                    //评论者ID
+	Id          int64     `json:"id" gorm:"column:id" db:"id" form:"id"`                                    // 评论ID 时间戳 毫秒
 	FromId      int64     `json:"fromId" gorm:"column:from_id" db:"fromId" form:"fromId"`                   //评论者ID
 	Name        string    `json:"name" gorm:"column:name" db:"name" form:"name"`                            //用户姓名
 	HeadImg     string    `json:"headImg" gorm:"column:head_img" db:"head_img" form:"head_img"`             //用户头像
