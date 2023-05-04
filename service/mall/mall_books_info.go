@@ -170,7 +170,7 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 		FromId:      int64(userToken.UserId),
 		Name:        user.NickName,
 		Comment:     req.Comment,
-		To:          req.To,
+		To:          req.Name,
 		ToId:        req.ToId,
 		CommentTime: req.CommentTime,
 		BooksId:     req.BooksID,
