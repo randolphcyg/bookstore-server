@@ -17,10 +17,10 @@ func (m *ManageOrderApi) CheckDoneOrder(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CheckDone(IDS); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败", c)
+		global.GVA_LOG.Error("发货失败!", zap.Error(err))
+		response.FailWithMessage("发货失败", c)
 	} else {
-		response.OkWithMessage("更新成功", c)
+		response.OkWithMessage("发货成功", c)
 	}
 }
 
@@ -30,9 +30,9 @@ func (m *ManageOrderApi) CheckOutOrder(c *gin.Context) {
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CheckOut(IDS); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败", c)
+		response.FailWithMessage("出库失败", c)
 	} else {
-		response.OkWithMessage("更新成功", c)
+		response.OkWithMessage("出库成功", c)
 	}
 }
 
@@ -41,10 +41,10 @@ func (m *ManageOrderApi) CloseOrder(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CloseOrder(IDS); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.GVA_LOG.Error("关闭失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
-		response.OkWithMessage("更新成功", c)
+		response.OkWithMessage("关闭成功", c)
 	}
 }
 
