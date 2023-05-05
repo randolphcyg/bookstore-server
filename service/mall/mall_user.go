@@ -44,12 +44,13 @@ func (m *MallUserService) UpdateUserInfo(token string, req mallReq.UpdateUserInf
 	var userInfo mall.MallUser
 	err = global.GVA_DB.Where("user_id =?", userToken.UserId).First(&userInfo).Error
 	// 若密码为空字符，则表明用户不打算修改密码，使用原密码保存
-	if !(req.PasswordMd5 == "") {
+	if req.PasswordMd5 != "" {
 		userInfo.PasswordMd5 = utils.MD5V([]byte(req.PasswordMd5))
 	}
 	userInfo.NickName = req.NickName
 	userInfo.IntroduceSign = req.IntroduceSign
 	err = global.GVA_DB.Where("user_id =?", userToken.UserId).UpdateColumns(&userInfo).Error
+
 	return
 }
 
