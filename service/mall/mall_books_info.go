@@ -21,10 +21,12 @@ func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCatego
 	// 根据搜索条件查询
 	var booksList []manage.MallBooksInfo
 	db := global.GVA_DB.Model(&manage.MallBooksInfo{})
+	// 存在关键词
 	if keyword != "" {
 		db.Where("books_name like ? or books_intro like ?", "%"+keyword+"%", "%"+keyword+"%")
 	}
-	if booksCategoryId >= 0 {
+	// 存在类别
+	if booksCategoryId > 0 {
 		db.Where("books_category_id= ?", booksCategoryId)
 	}
 	err = db.Count(&total).Error
@@ -40,6 +42,7 @@ func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCatego
 	offset := 10 * (pageNumber - 1)
 	err = db.Limit(limit).Offset(offset).Find(&booksList).Error
 	// 返回查询结果
+	searchBooksList = make([]mallRes.BooksSearchResponse, 0)
 	for _, books := range booksList {
 		searchBooks := mallRes.BooksSearchResponse{
 			BooksId:       *books.BooksId,
@@ -50,6 +53,7 @@ func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCatego
 		}
 		searchBooksList = append(searchBooksList, searchBooks)
 	}
+
 	return
 }
 
