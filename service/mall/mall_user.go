@@ -41,11 +41,16 @@ func (m *MallUserService) UpdateUserInfo(token string, req mallReq.UpdateUserInf
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
+
 	var userInfo mall.MallUser
 	err = global.GVA_DB.Where("user_id =?", userToken.UserId).First(&userInfo).Error
+	if err != nil {
+		return
+	}
+
 	// 若密码为空字符，则表明用户不打算修改密码，使用原密码保存
 	if req.PasswordMd5 != "" {
-		userInfo.PasswordMd5 = utils.MD5V([]byte(req.PasswordMd5))
+		userInfo.PasswordMd5 = req.PasswordMd5
 	}
 	userInfo.NickName = req.NickName
 	userInfo.IntroduceSign = req.IntroduceSign
@@ -60,19 +65,33 @@ func (m *MallUserService) GetUserDetail(token string) (err error, userDetail mal
 	if err != nil {
 		return errors.New("不存在的用户"), userDetail
 	}
+
 	var userInfo mall.MallUser
 	err = global.GVA_DB.Where("user_id =?", userToken.UserId).First(&userInfo).Error
 	if err != nil {
 		return errors.New("用户信息获取失败"), userDetail
 	}
+
 	err = copier.Copy(&userDetail, &userInfo)
+
 	return
 }
 
 func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, user mall.MallUser, userToken mall.MallUserToken) {
-	err = global.GVA_DB.Where("login_name=? AND password_md5=?", params.LoginName, params.PasswordMd5).First(&user).Error
+	err = global.GVA_DB.Where("login_name=?", params.LoginName).First(&user).Error
+	if err != nil {
+		err = errors.New("不存在的用户！")
+		return
+	}
+
 	if user.LockedFlag == 1 || user.IsDeleted == 1 {
 		err = errors.New("该用户已禁用或删除！")
+		return
+	}
+
+	err = global.GVA_DB.Where("login_name=? AND password_md5=?", params.LoginName, params.PasswordMd5).First(&user).Error
+	if err != nil {
+		err = errors.New("密码错误！")
 		return
 	}
 
