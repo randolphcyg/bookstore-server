@@ -57,15 +57,6 @@ func (*Local) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	return p, filename, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [ccfish86](https://github.com/ccfish86)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@object: *Local
-//@function: DeleteFile
-//@description: 删除文件
-//@param: key string
-//@return: error
-
 func (*Local) DeleteFile(key string) error {
 	p := global.CONFIG.Local.Path + "/" + key
 	if strings.Contains(p, global.CONFIG.Local.Path) {

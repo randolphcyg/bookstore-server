@@ -50,7 +50,7 @@ func GenOrderNo() string {
 	return timestamp + sb.String()
 }
 
-// '2,3' 转换为[2,3]
+// StrToInt '2,3' 转换为[2,3]
 func StrToInt(strNum string) (nums []int) {
 	strNums := strings.Split(strNum, ",")
 	for _, s := range strNums {
