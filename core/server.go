@@ -2,27 +2,30 @@ package core
 
 import (
 	"fmt"
-	"time"
-
-	"go.uber.org/zap"
+	"net/http"
 
 	"bookstore/global"
 	"bookstore/initialize"
+
+	"github.com/jpillora/overseer"
+	"go.uber.org/zap"
 )
 
 type server interface {
 	ListenAndServe() error
 }
 
-func RunWindowsServer() {
+func RunWindowsServer(state overseer.State) {
 	Router := initialize.Routers()
 
-	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)
-	s := initServer(address, Router)
-	// 保证文本顺序输出
-	// In order to ensure that the text order output can be deleted
-	time.Sleep(10 * time.Microsecond)
-	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
+	address := fmt.Sprintf(":%d", global.CONFIG.System.Addr)
 
-	global.GVA_LOG.Error(s.ListenAndServe().Error())
+	srv := &http.Server{
+		Addr:    address,
+		Handler: Router,
+	}
+	global.LOG.Info("server run success on ", zap.String("address", address))
+	if err := srv.Serve(state.Listener); err != nil && err != http.ErrServerClosed {
+		return
+	}
 }

@@ -21,7 +21,7 @@ func (m *MallUserApi) UserRegister(c *gin.Context) {
 		return
 	}
 	if err := mallUserService.RegisterUser(req); err != nil {
-		global.GVA_LOG.Error("创建失败", zap.Error(err))
+		global.LOG.Error("创建失败", zap.Error(err))
 		response.FailWithMessage("创建失败:"+err.Error(), c)
 	}
 	response.OkWithMessage("创建成功", c)
@@ -35,7 +35,7 @@ func (m *MallUserApi) UserInfoUpdate(c *gin.Context) {
 	}
 
 	if err := mallUserService.UpdateUserInfo(token, req); err != nil {
-		global.GVA_LOG.Error("更新用户信息失败", zap.Error(err))
+		global.LOG.Error("更新用户信息失败", zap.Error(err))
 		response.FailWithMessage("更新用户信息失败"+err.Error(), c)
 	}
 	response.OkWithMessage("更新用户信息成功", c)
@@ -44,7 +44,7 @@ func (m *MallUserApi) UserInfoUpdate(c *gin.Context) {
 func (m *MallUserApi) GetUserInfo(c *gin.Context) {
 	token := c.GetHeader("token")
 	if err, userDetail := mallUserService.GetUserDetail(token); err != nil {
-		global.GVA_LOG.Error("未查询到记录", zap.Error(err))
+		global.LOG.Error("未查询到记录", zap.Error(err))
 		response.FailWithMessage("未查询到记录", c)
 	} else {
 		response.OkWithData(userDetail, c)

@@ -9,7 +9,7 @@ import (
 )
 
 func GormMysql() *gorm.DB {
-	m := global.GVA_CONFIG.Mysql
+	m := global.CONFIG.Mysql
 	if m.Dbname == "" {
 		return nil
 	}

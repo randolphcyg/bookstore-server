@@ -21,11 +21,11 @@ type ManageBooksInfoService struct {
 // CreateMallBooksInfo 创建MallBooksInfo
 func (m *ManageBooksInfoService) CreateMallBooksInfo(req manageReq.BooksInfoAddParam) (err error) {
 	var booksCategory manage.MallBooksCategory
-	err = global.GVA_DB.Where("category_id=?  AND is_deleted=0", req.BooksCategoryId).First(&booksCategory).Error
+	err = global.DB.Where("category_id=?  AND is_deleted=0", req.BooksCategoryId).First(&booksCategory).Error
 	if booksCategory.CategoryLevel != enum.LevelThree.Code() {
 		return errors.New("分类数据异常")
 	}
-	if !errors.Is(global.GVA_DB.Where("books_name=? AND books_category_id=?", req.BooksName, req.BooksCategoryId).First(&manage.MallBooksInfo{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.DB.Where("books_name=? AND books_category_id=?", req.BooksName, req.BooksCategoryId).First(&manage.MallBooksInfo{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的商品信息")
 	}
 
@@ -47,13 +47,13 @@ func (m *ManageBooksInfoService) CreateMallBooksInfo(req manageReq.BooksInfoAddP
 		UpdateTime:         common.JSONTime{Time: time.Now()},
 	}
 
-	err = global.GVA_DB.Create(&booksInfo).Error
+	err = global.DB.Create(&booksInfo).Error
 	return err
 }
 
 // DeleteMallBooksInfo 删除MallBooksInfo记录
 func (m *ManageBooksInfoService) DeleteMallBooksInfo(mallBooksInfo manage.MallBooksInfo) (err error) {
-	err = global.GVA_DB.Delete(&mallBooksInfo).Error
+	err = global.DB.Delete(&mallBooksInfo).Error
 	return err
 }
 
@@ -61,7 +61,7 @@ func (m *ManageBooksInfoService) DeleteMallBooksInfo(mallBooksInfo manage.MallBo
 func (m *ManageBooksInfoService) ChangeMallBooksInfoByIds(ids request.IdsReq, sellStatus string) (err error) {
 	intSellStatus, _ := strconv.Atoi(sellStatus)
 	//更新字段为0时，不能直接UpdateColumns
-	err = global.GVA_DB.Model(&manage.MallBooksInfo{}).Where("books_id in ?", ids.Ids).Update("books_sell_status", intSellStatus).Error
+	err = global.DB.Model(&manage.MallBooksInfo{}).Where("books_id in ?", ids.Ids).Update("books_sell_status", intSellStatus).Error
 	return err
 }
 
@@ -86,13 +86,13 @@ func (m *ManageBooksInfoService) UpdateMallBooksInfo(req manageReq.BooksInfoUpda
 		UpdateTime:         common.JSONTime{Time: time.Now()},
 	}
 
-	err = global.GVA_DB.Where("books_id=?", booksInfo.BooksId).Updates(&booksInfo).Error
+	err = global.DB.Where("books_id=?", booksInfo.BooksId).Updates(&booksInfo).Error
 	return err
 }
 
 // GetMallBooksInfo 根据id获取MallBooksInfo记录
 func (m *ManageBooksInfoService) GetMallBooksInfo(id int) (err error, mallBooksInfo manage.MallBooksInfo) {
-	err = global.GVA_DB.Where("books_id = ?", id).First(&mallBooksInfo).Error
+	err = global.DB.Where("books_id = ?", id).First(&mallBooksInfo).Error
 	return
 }
 
@@ -101,7 +101,7 @@ func (m *ManageBooksInfoService) GetMallBooksInfoInfoList(info manageReq.MallBoo
 	limit := info.PageSize
 	offset := info.PageSize * (info.PageNumber - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&manage.MallBooksInfo{})
+	db := global.DB.Model(&manage.MallBooksInfo{})
 	var mallBooksInfos []manage.MallBooksInfo
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error

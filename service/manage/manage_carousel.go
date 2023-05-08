@@ -31,17 +31,17 @@ func (m *ManageCarouselService) CreateCarousel(req manageReq.MallCarouselAddPara
 	if err = utils.Verify(mallCarousel, utils.CarouselAddParamVerify); err != nil {
 		return errors.New(err.Error())
 	}
-	err = global.GVA_DB.Create(&mallCarousel).Error
+	err = global.DB.Create(&mallCarousel).Error
 	return err
 }
 
 func (m *ManageCarouselService) DeleteCarousel(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&manage.MallCarousel{}, "carousel_id in ?", ids.Ids).Error
+	err = global.DB.Delete(&manage.MallCarousel{}, "carousel_id in ?", ids.Ids).Error
 	return err
 }
 
 func (m *ManageCarouselService) UpdateCarousel(req manageReq.MallCarouselUpdateParam) (err error) {
-	if errors.Is(global.GVA_DB.Where("carousel_id = ?", req.CarouselId).First(&manage.MallCarousel{}).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.DB.Where("carousel_id = ?", req.CarouselId).First(&manage.MallCarousel{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("未查询到记录！")
 	}
 	carouseRank, _ := strconv.Atoi(req.CarouselRank)
@@ -55,12 +55,12 @@ func (m *ManageCarouselService) UpdateCarousel(req manageReq.MallCarouselUpdateP
 	if err = utils.Verify(mallCarousel, utils.CarouselAddParamVerify); err != nil {
 		return errors.New(err.Error())
 	}
-	err = global.GVA_DB.Where("carousel_id = ?", req.CarouselId).UpdateColumns(&mallCarousel).Error
+	err = global.DB.Where("carousel_id = ?", req.CarouselId).UpdateColumns(&mallCarousel).Error
 	return err
 }
 
 func (m *ManageCarouselService) GetCarousel(id int) (err error, mallCarousel manage.MallCarousel) {
-	err = global.GVA_DB.Where("carousel_id = ?", id).First(&mallCarousel).Error
+	err = global.DB.Where("carousel_id = ?", id).First(&mallCarousel).Error
 	return
 }
 
@@ -68,7 +68,7 @@ func (m *ManageCarouselService) GetCarouselInfoList(info manageReq.MallCarouselS
 	limit := info.PageSize
 	offset := info.PageSize * (info.PageNumber - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&manage.MallCarousel{})
+	db := global.DB.Model(&manage.MallCarousel{})
 	var mallCarousels []manage.MallCarousel
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error

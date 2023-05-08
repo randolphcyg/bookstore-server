@@ -24,7 +24,7 @@ func (g *_gorm) Config() *gorm.Config {
 		LogLevel:      logger.Warn,
 		Colorful:      true,
 	})
-	switch global.GVA_CONFIG.Mysql.LogMode {
+	switch global.CONFIG.Mysql.LogMode {
 	case "silent", "Silent":
 		config.Logger = _default.LogMode(logger.Silent)
 	case "error", "Error":

@@ -12,12 +12,12 @@ import (
 
 func Routers() *gin.Engine {
 	var Router = gin.Default()
-	Router.StaticFS(global.GVA_CONFIG.Local.Path, http.Dir(global.GVA_CONFIG.Local.Path)) // 为用户头像和文件提供静态地址
+	Router.StaticFS(global.CONFIG.Local.Path, http.Dir(global.CONFIG.Local.Path)) // 为用户头像和文件提供静态地址
 	//Router.Use(middleware.LoadTls())  // 打开就能玩https了
-	global.GVA_LOG.Info("use middleware logger")
+	global.LOG.Info("use middleware logger")
 	// 跨域
 	Router.Use(middleware.Cors()) // 如需跨域可以打开
-	global.GVA_LOG.Info("use middleware cors")
+	global.LOG.Info("use middleware cors")
 	// 方便统一添加路由组前缀 多服务器上线使用
 	//商城后管路由
 	manageRouter := router.RouterGroupApp.Manage
@@ -52,6 +52,6 @@ func Routers() *gin.Engine {
 		mallRouter.InitMallShopCartRouter(MallGroup)
 		mallRouter.InitMallOrderRouter(MallGroup)
 	}
-	global.GVA_LOG.Info("router register success")
+	global.LOG.Info("router register success")
 	return Router
 }

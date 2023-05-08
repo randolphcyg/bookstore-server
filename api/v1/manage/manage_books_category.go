@@ -22,7 +22,7 @@ func (g *ManageBooksCategoryApi) CreateCategory(c *gin.Context) {
 	var category manageReq.MallBooksCategoryReq
 	_ = c.ShouldBindJSON(&category)
 	if err := mallBooksCategoryService.AddCategory(category); err != nil {
-		global.GVA_LOG.Error("创建失败", zap.Error(err))
+		global.LOG.Error("创建失败", zap.Error(err))
 		response.FailWithMessage("创建失败:"+err.Error(), c)
 	} else {
 		response.OkWithMessage("创建成功", c)
@@ -34,7 +34,7 @@ func (g *ManageBooksCategoryApi) UpdateCategory(c *gin.Context) {
 	var category manageReq.MallBooksCategoryReq
 	_ = c.ShouldBindJSON(&category)
 	if err := mallBooksCategoryService.UpdateCategory(category); err != nil {
-		global.GVA_LOG.Error("更新失败", zap.Error(err))
+		global.LOG.Error("更新失败", zap.Error(err))
 		response.FailWithMessage("更新失败，存在相同分类", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -46,7 +46,7 @@ func (g *ManageBooksCategoryApi) GetCategoryList(c *gin.Context) {
 	var req manageReq.SearchCategoryParams
 	_ = c.ShouldBindQuery(&req)
 	if err, list, total := mallBooksCategoryService.SelectCategoryPage(req); err != nil {
-		global.GVA_LOG.Error("获取失败！", zap.Error(err))
+		global.LOG.Error("获取失败！", zap.Error(err))
 		response.FailWithMessage("获取失败:"+err.Error(), c)
 	} else {
 		response.OkWithData(response.PageResult{
@@ -64,7 +64,7 @@ func (g *ManageBooksCategoryApi) GetCategory(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, booksCategory := mallBooksCategoryService.SelectCategoryById(id)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败！", zap.Error(err))
+		global.LOG.Error("获取失败！", zap.Error(err))
 		response.FailWithMessage("获取失败:"+err.Error(), c)
 	} else {
 		response.OkWithData(manageRes.BooksCategoryResponse{BooksCategory: booksCategory}, c)
@@ -76,7 +76,7 @@ func (g *ManageBooksCategoryApi) DelCategory(c *gin.Context) {
 	var ids request.IdsReq
 	_ = c.ShouldBindJSON(&ids)
 	if err, _ := mallBooksCategoryService.DeleteBooksCategoriesByIds(ids); err != nil {
-		global.GVA_LOG.Error("删除失败！", zap.Error(err))
+		global.LOG.Error("删除失败！", zap.Error(err))
 		response.FailWithMessage("删除失败"+err.Error(), c)
 	} else {
 		response.OkWithMessage("删除成功", c)
@@ -89,7 +89,7 @@ func (g *ManageBooksCategoryApi) ListForSelect(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, booksCategory := mallBooksCategoryService.SelectCategoryById(id)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败！", zap.Error(err))
+		global.LOG.Error("获取失败！", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)
 	}
 	level := booksCategory.CategoryLevel

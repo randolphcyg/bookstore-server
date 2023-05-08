@@ -17,7 +17,7 @@ func (m *ManageOrderApi) CheckDoneOrder(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CheckDone(IDS); err != nil {
-		global.GVA_LOG.Error("发货失败!", zap.Error(err))
+		global.LOG.Error("发货失败!", zap.Error(err))
 		response.FailWithMessage("发货失败", c)
 	} else {
 		response.OkWithMessage("发货成功", c)
@@ -29,7 +29,7 @@ func (m *ManageOrderApi) CheckOutOrder(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CheckOut(IDS); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("出库失败", c)
 	} else {
 		response.OkWithMessage("出库成功", c)
@@ -41,7 +41,7 @@ func (m *ManageOrderApi) CloseOrder(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallOrderService.CloseOrder(IDS); err != nil {
-		global.GVA_LOG.Error("关闭失败!", zap.Error(err))
+		global.LOG.Error("关闭失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithMessage("关闭成功", c)
@@ -52,7 +52,7 @@ func (m *ManageOrderApi) CloseOrder(c *gin.Context) {
 func (m *ManageOrderApi) FindMallOrder(c *gin.Context) {
 	id := c.Param("orderId")
 	if err, bookStoreOrderDetailVO := mallOrderService.GetMallOrder(id); err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		global.LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
 		response.OkWithData(bookStoreOrderDetailVO, c)
@@ -66,7 +66,7 @@ func (m *ManageOrderApi) GetMallOrderList(c *gin.Context) {
 	orderNo := c.Query("orderNo")
 	orderStatus := c.Query("orderStatus")
 	if err, list, total := mallOrderService.GetMallOrderInfoList(pageInfo, orderNo, orderStatus); err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
 		response.OkWithDetailed(response.PageResult{

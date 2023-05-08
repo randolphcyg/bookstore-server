@@ -22,7 +22,7 @@ type MallOrderService struct {
 // SaveOrder 保存订单
 func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddress, myShoppingCartItems []mallRes.CartItemResponse) (err error, orderNo string) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), orderNo
 	}
@@ -33,7 +33,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 		booksIds = append(booksIds, cartItem.BooksId)
 	}
 	var bookStoreBooks []manage.MallBooksInfo
-	global.GVA_DB.Where("books_id in ? ", booksIds).Find(&bookStoreBooks)
+	global.DB.Where("books_id in ? ", booksIds).Find(&bookStoreBooks)
 
 	//检查是否包含已下架商品
 	for _, mallBooks := range bookStoreBooks {
@@ -59,14 +59,14 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 
 	//删除购物项
 	if len(itemIdList) > 0 && len(booksIds) > 0 {
-		if err = global.GVA_DB.Where("cart_item_id in ?", itemIdList).Updates(mall.MallShoppingCartItem{IsDeleted: 1}).Error; err == nil {
+		if err = global.DB.Where("cart_item_id in ?", itemIdList).Updates(mall.MallShoppingCartItem{IsDeleted: 1}).Error; err == nil {
 			var stockNumDTOS []manageReq.StockNumDTO
 			copier.Copy(&stockNumDTOS, &myShoppingCartItems)
 			for _, stockNumDTO := range stockNumDTOS {
 				var booksInfo manage.MallBooksInfo
-				global.GVA_DB.Where("books_id =?", stockNumDTO.BooksId).First(&booksInfo)
+				global.DB.Where("books_id =?", stockNumDTO.BooksId).First(&booksInfo)
 				tmp := *booksInfo.StockNum - stockNumDTO.BooksCount
-				if err = global.GVA_DB.Where("books_id =? and stock_num>= ? and books_sell_status = 0",
+				if err = global.DB.Where("books_id =? and stock_num>= ? and books_sell_status = 0",
 					stockNumDTO.BooksId, stockNumDTO.BooksCount).Updates(
 					manage.MallBooksInfo{StockNum: &tmp}).Error; err != nil {
 					return errors.New("库存不足！"), orderNo
@@ -92,7 +92,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 			bookStoreOrder.ExtraInfo = ""
 			bookStoreOrder.AddressId = userAddress.AddressId
 			//生成订单项并保存订单项纪录
-			if err = global.GVA_DB.Save(&bookStoreOrder).Error; err != nil {
+			if err = global.DB.Save(&bookStoreOrder).Error; err != nil {
 				return errors.New("订单入库失败！"), orderNo
 			}
 			//生成订单收货地址快照，并保存至数据库
@@ -108,7 +108,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 				bookStoreOrderItem.CreateTime = common.JSONTime{Time: time.Now()}
 				bookStoreOrderItems = append(bookStoreOrderItems, bookStoreOrderItem)
 			}
-			if err = global.GVA_DB.Save(&bookStoreOrderItems).Error; err != nil {
+			if err = global.DB.Save(&bookStoreOrderItems).Error; err != nil {
 				return err, orderNo
 			}
 		}
@@ -119,7 +119,7 @@ func (m *MallOrderService) SaveOrder(token string, userAddress mall.MallUserAddr
 // PaySuccess 支付订单
 func (m *MallOrderService) PaySuccess(orderNo string, payType int) (err error) {
 	var mallOrder manage.MallOrder
-	err = global.GVA_DB.Where("order_no = ? and is_deleted=0 ", orderNo).First(&mallOrder).Error
+	err = global.DB.Where("order_no = ? and is_deleted=0 ", orderNo).First(&mallOrder).Error
 	if mallOrder != (manage.MallOrder{}) {
 		if mallOrder.OrderStatus != 0 {
 			return errors.New("订单状态异常！")
@@ -129,7 +129,7 @@ func (m *MallOrderService) PaySuccess(orderNo string, payType int) (err error) {
 		mallOrder.PayStatus = 1
 		mallOrder.PayTime = common.JSONTime{time.Now()}
 		mallOrder.UpdateTime = common.JSONTime{time.Now()}
-		err = global.GVA_DB.Save(&mallOrder).Error
+		err = global.DB.Save(&mallOrder).Error
 	}
 	return
 }
@@ -137,12 +137,12 @@ func (m *MallOrderService) PaySuccess(orderNo string, payType int) (err error) {
 // FinishOrder 完结订单
 func (m *MallOrderService) FinishOrder(token string, orderNo string) (err error) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 	var mallOrder manage.MallOrder
-	if err = global.GVA_DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
+	if err = global.DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
 		return errors.New("未查询到记录！")
 	}
 	if mallOrder.UserId != userToken.UserId {
@@ -150,19 +150,19 @@ func (m *MallOrderService) FinishOrder(token string, orderNo string) (err error)
 	}
 	mallOrder.OrderStatus = enum.ORDER_SUCCESS.Code()
 	mallOrder.UpdateTime = common.JSONTime{time.Now()}
-	err = global.GVA_DB.Save(&mallOrder).Error
+	err = global.DB.Save(&mallOrder).Error
 	return
 }
 
 // CancelOrder 关闭订单
 func (m *MallOrderService) CancelOrder(token string, orderNo string) (err error) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 	var mallOrder manage.MallOrder
-	if err = global.GVA_DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
+	if err = global.DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
 		return errors.New("未查询到记录！")
 	}
 	if mallOrder.UserId != userToken.UserId {
@@ -174,26 +174,26 @@ func (m *MallOrderService) CancelOrder(token string, orderNo string) (err error)
 	}
 	mallOrder.OrderStatus = enum.ORDER_CLOSED_BY_MALLUSER.Code()
 	mallOrder.UpdateTime = common.JSONTime{time.Now()}
-	err = global.GVA_DB.Save(&mallOrder).Error
+	err = global.DB.Save(&mallOrder).Error
 	return
 }
 
 // GetOrderDetailByOrderNo 获取订单详情
 func (m *MallOrderService) GetOrderDetailByOrderNo(token string, orderNo string) (err error, orderDetail mallRes.MallOrderDetailVO) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), orderDetail
 	}
 	var mallOrder manage.MallOrder
-	if err = global.GVA_DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
+	if err = global.DB.Where("order_no=? and is_deleted = 0", orderNo).First(&mallOrder).Error; err != nil {
 		return errors.New("未查询到记录！"), orderDetail
 	}
 	if mallOrder.UserId != userToken.UserId {
 		return errors.New("禁止该操作！"), orderDetail
 	}
 	var orderItems []manage.MallOrderItem
-	err = global.GVA_DB.Where("order_id = ?", mallOrder.OrderId).Find(&orderItems).Error
+	err = global.DB.Where("order_id = ?", mallOrder.OrderId).Find(&orderItems).Error
 	if len(orderItems) <= 0 {
 		return errors.New("订单项不存在！"), orderDetail
 	}
@@ -214,13 +214,13 @@ func (m *MallOrderService) GetOrderDetailByOrderNo(token string, orderNo string)
 // MallOrderListBySearch 搜索订单
 func (m *MallOrderService) MallOrderListBySearch(token string, pageNumber int, status string) (err error, list []mallRes.MallOrderResponse, total int64) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), list, total
 	}
 	// 根据搜索条件查询
 	var bookStoreOrders []manage.MallOrder
-	db := global.GVA_DB.Model(&bookStoreOrders)
+	db := global.DB.Model(&bookStoreOrders)
 
 	if status != "" {
 		db.Where("order_status = ?", status)
@@ -248,7 +248,7 @@ func (m *MallOrderService) MallOrderListBySearch(token string, pageNumber int, s
 		//获取OrderItem
 		var orderItems []manage.MallOrderItem
 		if len(orderIds) > 0 {
-			global.GVA_DB.Where("order_id in ?", orderIds).Find(&orderItems)
+			global.DB.Where("order_id in ?", orderIds).Find(&orderItems)
 			itemByOrderIdMap := make(map[int][]manage.MallOrderItem)
 			for _, orderItem := range orderItems {
 				itemByOrderIdMap[orderItem.OrderId] = []manage.MallOrderItem{}

@@ -22,16 +22,16 @@ func (m *MallShopCartService) GetMyShoppingCartItems(token string) (err error, c
 	var userToken mall.MallUserToken
 	var shopCartItems []mall.MallShoppingCartItem
 	var booksInfos []manage.MallBooksInfo
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), cartItems
 	}
-	global.GVA_DB.Where("user_id=? and is_deleted = 0", userToken.UserId).Find(&shopCartItems)
+	global.DB.Where("user_id=? and is_deleted = 0", userToken.UserId).Find(&shopCartItems)
 	var booksIds []int
 	for _, shopcartItem := range shopCartItems {
 		booksIds = append(booksIds, shopcartItem.BooksId)
 	}
-	global.GVA_DB.Where("books_id in ?", booksIds).Find(&booksInfos)
+	global.DB.Where("books_id in ?", booksIds).Find(&booksInfos)
 	booksMap := make(map[int]manage.MallBooksInfo)
 	for _, booksInfo := range booksInfos {
 		booksMap[*booksInfo.BooksId] = booksInfo
@@ -60,22 +60,22 @@ func (m *MallShopCartService) SaveMallCartItem(token string, req mallReq.SaveCar
 		return errors.New("超出单个商品的最大购买数量！")
 	}
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 	var shopCartItems []mall.MallShoppingCartItem
 	// 是否已存在商品
-	err = global.GVA_DB.Where("user_id = ? and books_id = ? and is_deleted = 0", userToken.UserId, req.BooksId).Find(&shopCartItems).Error
+	err = global.DB.Where("user_id = ? and books_id = ? and is_deleted = 0", userToken.UserId, req.BooksId).Find(&shopCartItems).Error
 	if err != nil {
 		return errors.New("已存在！无需重复添加！")
 	}
-	err = global.GVA_DB.Where("books_id = ? ", req.BooksId).First(&manage.MallBooksInfo{}).Error
+	err = global.DB.Where("books_id = ? ", req.BooksId).First(&manage.MallBooksInfo{}).Error
 	if err != nil {
 		return errors.New(" 商品为空")
 	}
 	var total int64
-	global.GVA_DB.Where("user_id =?  and is_deleted = 0", userToken.UserId).Count(&total)
+	global.DB.Where("user_id =?  and is_deleted = 0", userToken.UserId).Count(&total)
 	if total > 20 {
 		return errors.New("超出购物车最大容量！")
 	}
@@ -86,7 +86,7 @@ func (m *MallShopCartService) SaveMallCartItem(token string, req mallReq.SaveCar
 	shopCartItem.UserId = userToken.UserId
 	shopCartItem.CreateTime = common.JSONTime{Time: time.Now()}
 	shopCartItem.UpdateTime = common.JSONTime{Time: time.Now()}
-	err = global.GVA_DB.Save(&shopCartItem).Error
+	err = global.DB.Save(&shopCartItem).Error
 	return
 }
 
@@ -96,12 +96,12 @@ func (m *MallShopCartService) UpdateMallCartItem(token string, req mallReq.Updat
 		return errors.New("超出单个商品的最大购买数量！")
 	}
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 	var shopCartItem mall.MallShoppingCartItem
-	if err = global.GVA_DB.Where("cart_item_id=? and is_deleted = 0", req.CartItemId).First(&shopCartItem).Error; err != nil {
+	if err = global.DB.Where("cart_item_id=? and is_deleted = 0", req.CartItemId).First(&shopCartItem).Error; err != nil {
 		return errors.New("未查询到记录！")
 	}
 	if shopCartItem.UserId != userToken.UserId {
@@ -109,36 +109,36 @@ func (m *MallShopCartService) UpdateMallCartItem(token string, req mallReq.Updat
 	}
 	shopCartItem.BooksCount = req.BooksCount
 	shopCartItem.UpdateTime = common.JSONTime{time.Now()}
-	err = global.GVA_DB.Save(&shopCartItem).Error
+	err = global.DB.Save(&shopCartItem).Error
 	return
 }
 
 func (m *MallShopCartService) DeleteMallCartItem(token string, id int) (err error) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 	var shopCartItem mall.MallShoppingCartItem
-	err = global.GVA_DB.Where("cart_item_id = ? and is_deleted = 0", id).First(&shopCartItem).Error
+	err = global.DB.Where("cart_item_id = ? and is_deleted = 0", id).First(&shopCartItem).Error
 	if err != nil {
 		return
 	}
 	if userToken.UserId != shopCartItem.UserId {
 		return errors.New("禁止该操作！")
 	}
-	err = global.GVA_DB.Where("cart_item_id = ? and is_deleted = 0", id).UpdateColumns(&mall.MallShoppingCartItem{IsDeleted: 1}).Error
+	err = global.DB.Where("cart_item_id = ? and is_deleted = 0", id).UpdateColumns(&mall.MallShoppingCartItem{IsDeleted: 1}).Error
 	return
 }
 
 func (m *MallShopCartService) GetCartItemsForSettle(token string, cartItemIds []int) (err error, cartItemRes []mallRes.CartItemResponse) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), cartItemRes
 	}
 	var shopCartItems []mall.MallShoppingCartItem
-	err = global.GVA_DB.Where("cart_item_id in (?) and user_id = ? and is_deleted = 0", cartItemIds, userToken.UserId).Find(&shopCartItems).Error
+	err = global.DB.Where("cart_item_id in (?) and user_id = ? and is_deleted = 0", cartItemIds, userToken.UserId).Find(&shopCartItems).Error
 	if err != nil {
 		return
 	}
@@ -158,7 +158,7 @@ func getMallShoppingCartItemVOS(cartItems []mall.MallShoppingCartItem) (err erro
 		booksIds = append(booksIds, cartItem.BooksId)
 	}
 	var bookStoreBooks []manage.MallBooksInfo
-	err = global.GVA_DB.Where("books_id in ?", booksIds).Find(&bookStoreBooks).Error
+	err = global.DB.Where("books_id in ?", booksIds).Find(&bookStoreBooks).Error
 	if err != nil {
 		return
 	}

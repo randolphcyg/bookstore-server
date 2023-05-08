@@ -32,7 +32,7 @@ func (m *ManageAdminUserApi) CreateAdminUser(c *gin.Context) {
 		LoginPassword: utils.MD5V([]byte(params.LoginPassword)),
 	}
 	if err := mallAdminUserService.CreateMallAdminUser(mallAdminUser); err != nil {
-		global.GVA_LOG.Error("创建失败:", zap.Error(err))
+		global.LOG.Error("创建失败:", zap.Error(err))
 		response.FailWithMessage("创建失败"+err.Error(), c)
 	} else {
 		response.OkWithMessage("创建成功", c)
@@ -48,7 +48,7 @@ func (m *ManageAdminUserApi) UpdateAdminUserPassword(c *gin.Context) {
 	//}
 	userToken := c.GetHeader("token")
 	if err := mallAdminUserService.UpdateMallAdminPassWord(userToken, req); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败:"+err.Error(), c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -62,7 +62,7 @@ func (m *ManageAdminUserApi) UpdateAdminUserName(c *gin.Context) {
 	_ = c.ShouldBindJSON(&req)
 	userToken := c.GetHeader("token")
 	if err := mallAdminUserService.UpdateMallAdminName(userToken, req); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -73,7 +73,7 @@ func (m *ManageAdminUserApi) UpdateAdminUserName(c *gin.Context) {
 func (m *ManageAdminUserApi) AdminUserProfile(c *gin.Context) {
 	adminToken := c.GetHeader("token")
 	if err, mallAdminUser := mallAdminUserService.GetMallAdminUser(adminToken); err != nil {
-		global.GVA_LOG.Error("未查询到记录", zap.Error(err))
+		global.LOG.Error("未查询到记录", zap.Error(err))
 		response.FailWithMessage("未查询到记录", c)
 	} else {
 		mallAdminUser.LoginPassword = "******"
@@ -108,7 +108,7 @@ func (m *ManageAdminUserApi) UserList(c *gin.Context) {
 	var pageInfo manageReq.MallUserSearch
 	_ = c.ShouldBindQuery(&pageInfo)
 	if err, list, total := mallUserService.GetMallUserInfoList(pageInfo); err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
 		response.OkWithDetailed(response.PageResult{
@@ -126,7 +126,7 @@ func (m *ManageAdminUserApi) LockUser(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallUserService.LockUser(IDS, lockStatus); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -139,7 +139,7 @@ func (m *ManageAdminUserApi) DelUser(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
 	if err := mallUserService.DelUser(IDS, lockStatus); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -153,13 +153,13 @@ func (m *ManageAdminUserApi) UploadFile(c *gin.Context) {
 	noSave := c.DefaultQuery("noSave", "0")
 	_, header, err := c.Request.FormFile("file")
 	if err != nil {
-		global.GVA_LOG.Error("接收文件失败!", zap.Error(err))
+		global.LOG.Error("接收文件失败!", zap.Error(err))
 		response.FailWithMessage("接收文件失败", c)
 		return
 	}
 	err, file = fileUploadAndDownloadService.UploadFile(header, noSave) // 文件上传后拿到文件路径
 	if err != nil {
-		global.GVA_LOG.Error("修改数据库链接失败!", zap.Error(err))
+		global.LOG.Error("修改数据库链接失败!", zap.Error(err))
 		response.FailWithMessage("修改数据库链接失败", c)
 		return
 	}

@@ -23,7 +23,7 @@ type ManageOrderService struct {
 // CheckDone 修改订单状态为配货成功
 func (m *ManageOrderService) CheckDone(ids request.IdsReq) (err error) {
 	var orders []manage.MallOrder
-	err = global.GVA_DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
+	err = global.DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
 	var errorOrders string
 	if len(orders) != 0 {
 		for _, order := range orders {
@@ -36,7 +36,7 @@ func (m *ManageOrderService) CheckDone(ids request.IdsReq) (err error) {
 			}
 		}
 		if errorOrders == "" {
-			if err = global.GVA_DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: 2, UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
+			if err = global.DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: 2, UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
 				return err
 			}
 		} else {
@@ -49,7 +49,7 @@ func (m *ManageOrderService) CheckDone(ids request.IdsReq) (err error) {
 // CheckOut 出库
 func (m *ManageOrderService) CheckOut(ids request.IdsReq) (err error) {
 	var orders []manage.MallOrder
-	err = global.GVA_DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
+	err = global.DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
 	var errorOrders string
 	if len(orders) != 0 {
 		for _, order := range orders {
@@ -62,7 +62,7 @@ func (m *ManageOrderService) CheckOut(ids request.IdsReq) (err error) {
 			}
 		}
 		if errorOrders == "" {
-			if err = global.GVA_DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: 3, UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
+			if err = global.DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: 3, UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
 				return err
 			}
 		} else {
@@ -75,7 +75,7 @@ func (m *ManageOrderService) CheckOut(ids request.IdsReq) (err error) {
 // CloseOrder 商家关闭订单
 func (m *ManageOrderService) CloseOrder(ids request.IdsReq) (err error) {
 	var orders []manage.MallOrder
-	err = global.GVA_DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
+	err = global.DB.Where("order_id in ?", ids.Ids).Find(&orders).Error
 	var errorOrders string
 	if len(orders) != 0 {
 		for _, order := range orders {
@@ -88,7 +88,7 @@ func (m *ManageOrderService) CloseOrder(ids request.IdsReq) (err error) {
 			}
 		}
 		if errorOrders == "" {
-			if err = global.GVA_DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: enum.ORDER_CLOSED_BY_JUDGE.Code(), UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
+			if err = global.DB.Where("order_id in ?", ids.Ids).UpdateColumns(manage.MallOrder{OrderStatus: enum.ORDER_CLOSED_BY_JUDGE.Code(), UpdateTime: common.JSONTime{Time: time.Now()}}).Error; err != nil {
 				return err
 			}
 		} else {
@@ -101,15 +101,15 @@ func (m *ManageOrderService) CloseOrder(ids request.IdsReq) (err error) {
 // GetMallOrder 根据id获取MallOrder记录
 func (m *ManageOrderService) GetMallOrder(id string) (err error, bookStoreOrderDetailVO manageRes.BookStoreOrderDetailVO) {
 	var bookStoreOrder manage.MallOrder
-	if err = global.GVA_DB.Where("order_id = ?", id).First(&bookStoreOrder).Error; err != nil {
+	if err = global.DB.Where("order_id = ?", id).First(&bookStoreOrder).Error; err != nil {
 		return
 	}
 	var orderItems []manage.MallOrderItem
-	if err = global.GVA_DB.Where("order_id = ?", bookStoreOrder.OrderId).Find(&orderItems).Error; err != nil {
+	if err = global.DB.Where("order_id = ?", bookStoreOrder.OrderId).Find(&orderItems).Error; err != nil {
 		return
 	}
 	var userAddress mall.MallUserAddress
-	if err = global.GVA_DB.Where("address_id =?", bookStoreOrder.AddressId).First(&userAddress).Error; err != nil {
+	if err = global.DB.Where("address_id =?", bookStoreOrder.AddressId).First(&userAddress).Error; err != nil {
 		err = errors.New("不存在的用户地址")
 		return
 	}
@@ -147,7 +147,7 @@ func (m *ManageOrderService) GetMallOrderInfoList(info request.PageInfo, orderNo
 	limit := info.PageSize
 	offset := info.PageSize * (info.PageNumber - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&manage.MallOrder{})
+	db := global.DB.Model(&manage.MallOrder{})
 	if orderNo != "" {
 		db.Where("order_no", orderNo)
 	}

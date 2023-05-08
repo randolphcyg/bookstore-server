@@ -20,10 +20,10 @@ type ManageIndexConfigService struct {
 // CreateMallIndexConfig 创建MallIndexConfig记录
 func (m *ManageIndexConfigService) CreateMallIndexConfig(req manageReq.MallIndexConfigAddParams) (err error) {
 	var booksInfo manage.MallBooksInfo
-	if errors.Is(global.GVA_DB.Where("books_id=?", req.BooksId).First(&booksInfo).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.DB.Where("books_id=?", req.BooksId).First(&booksInfo).Error, gorm.ErrRecordNotFound) {
 		return errors.New("商品不存在")
 	}
-	if !errors.Is(global.GVA_DB.Where("config_type =? and books_id=? and is_deleted=0", req.ConfigType, req.BooksId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.DB.Where("config_type =? and books_id=? and is_deleted=0", req.ConfigType, req.BooksId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("已存在相同的首页配置项")
 	}
 
@@ -40,23 +40,23 @@ func (m *ManageIndexConfigService) CreateMallIndexConfig(req manageReq.MallIndex
 		return errors.New(err.Error())
 	}
 
-	err = global.GVA_DB.Create(&mallIndexConfig).Error
+	err = global.DB.Create(&mallIndexConfig).Error
 	return err
 }
 
 // DeleteMallIndexConfig 删除MallIndexConfig记录
 func (m *ManageIndexConfigService) DeleteMallIndexConfig(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Where("config_id in ?", ids.Ids).Delete(&manage.MallIndexConfig{}).Error
+	err = global.DB.Where("config_id in ?", ids.Ids).Delete(&manage.MallIndexConfig{}).Error
 	return err
 }
 
 // UpdateMallIndexConfig 更新MallIndexConfig记录
 func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndexConfigUpdateParams) (err error) {
 	//更新indexConfig
-	if errors.Is(global.GVA_DB.Where("books_id = ?", req.BooksId).First(&manage.MallBooksInfo{}).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.DB.Where("books_id = ?", req.BooksId).First(&manage.MallBooksInfo{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("商品不存在！")
 	}
-	if errors.Is(global.GVA_DB.Where("config_id=?", req.ConfigId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.DB.Where("config_id=?", req.ConfigId).First(&manage.MallIndexConfig{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("未查询到记录！")
 	}
 
@@ -73,17 +73,17 @@ func (m *ManageIndexConfigService) UpdateMallIndexConfig(req manageReq.MallIndex
 		return errors.New(err.Error())
 	}
 	var newIndexConfig manage.MallIndexConfig
-	err = global.GVA_DB.Where("config_type=? and books_id=?", mallIndexConfig.ConfigType, mallIndexConfig.BooksId).First(&newIndexConfig).Error
+	err = global.DB.Where("config_type=? and books_id=?", mallIndexConfig.ConfigType, mallIndexConfig.BooksId).First(&newIndexConfig).Error
 	if err != nil && newIndexConfig.ConfigId == mallIndexConfig.ConfigId {
 		return errors.New("已存在相同的首页配置项")
 	}
-	err = global.GVA_DB.Where("config_id=?", mallIndexConfig.ConfigId).Updates(&mallIndexConfig).Error
+	err = global.DB.Where("config_id=?", mallIndexConfig.ConfigId).Updates(&mallIndexConfig).Error
 	return err
 }
 
 // GetMallIndexConfig 根据id获取MallIndexConfig记录
 func (m *ManageIndexConfigService) GetMallIndexConfig(id uint) (err error, mallIndexConfig manage.MallIndexConfig) {
-	err = global.GVA_DB.Where("config_id = ?", id).First(&mallIndexConfig).Error
+	err = global.DB.Where("config_id = ?", id).First(&mallIndexConfig).Error
 	return
 }
 
@@ -92,7 +92,7 @@ func (m *ManageIndexConfigService) GetMallIndexConfigInfoList(info manageReq.Mal
 	limit := info.PageSize
 	offset := info.PageSize * (info.PageNumber - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&manage.MallIndexConfig{})
+	db := global.DB.Model(&manage.MallIndexConfig{})
 	// todo 有没有更好的方式实现？
 	if utils.NumsInList(info.ConfigType, []int{1, 2, 3, 4, 5}) {
 		db.Where("config_type=?", info.ConfigType)

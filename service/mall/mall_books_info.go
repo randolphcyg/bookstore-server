@@ -20,7 +20,7 @@ type MallBooksInfoService struct {
 func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCategoryId int, keyword string, orderBy string) (err error, searchBooksList []mallRes.BooksSearchResponse, total int64) {
 	// 根据搜索条件查询
 	var booksList []manage.MallBooksInfo
-	db := global.GVA_DB.Model(&manage.MallBooksInfo{})
+	db := global.DB.Model(&manage.MallBooksInfo{})
 	// 存在关键词
 	if keyword != "" {
 		db.Where("books_name like ? or books_intro like ?", "%"+keyword+"%", "%"+keyword+"%")
@@ -60,7 +60,7 @@ func (m *MallBooksInfoService) MallBooksListBySearch(pageNumber int, booksCatego
 // GetMallBooksInfo 获取图书信息
 func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.BooksInfoDetailResponse) {
 	var mallBooksInfo manage.MallBooksInfo
-	err = global.GVA_DB.Where("books_id = ?", id).First(&mallBooksInfo).Error
+	err = global.DB.Where("books_id = ?", id).First(&mallBooksInfo).Error
 	if mallBooksInfo.BooksSellStatus != 0 {
 		return errors.New("图书已下架"), mallRes.BooksInfoDetailResponse{}
 	}
@@ -73,7 +73,7 @@ func (m *MallBooksInfoService) GetMallBooksInfo(id int) (err error, res mallRes.
 	res.BooksCarouselList = list
 
 	var comments []manage.MallBooksComment
-	err = global.GVA_DB.Where("books_id = ?", id).Find(&comments).Error
+	err = global.DB.Where("books_id = ?", id).Find(&comments).Error
 	res.BookStoreBookCommentVOS, err = handleComments(comments)
 
 	return
@@ -127,20 +127,20 @@ func handleComments(comments []manage.MallBooksComment) (topComments []mallRes.B
 
 func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBookCommentParam) (err error) {
 	var userToken mall.MallUserToken
-	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
+	err = global.DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 
 	var user manage.MallUser
-	err = global.GVA_DB.Where("user_id =?", userToken.UserId).First(&user).Error
+	err = global.DB.Where("user_id =?", userToken.UserId).First(&user).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
 
 	// 查询某个人所有的订单
 	var mallOrders []manage.MallOrder
-	if err = global.GVA_DB.Where("user_id=? and order_status = 4 and is_deleted = 0", userToken.UserId).Find(&mallOrders).Error; err != nil {
+	if err = global.DB.Where("user_id=? and order_status = 4 and is_deleted = 0", userToken.UserId).Find(&mallOrders).Error; err != nil {
 		return errors.New("您未购买过该图书，无权评论！")
 	}
 
@@ -148,7 +148,7 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 	// 查询某个人所有的订单 中的所有书的ID
 	for _, o := range mallOrders {
 		var orderItems []manage.MallOrderItem
-		err = global.GVA_DB.Where("order_id = ?", o.OrderId).Find(&orderItems).Error
+		err = global.DB.Where("order_id = ?", o.OrderId).Find(&orderItems).Error
 		if len(orderItems) <= 0 {
 			continue
 		}
@@ -181,5 +181,5 @@ func (m *MallUserService) CreateBookComment(token string, req mallReq.CreateBook
 		InputShow:   true,
 	}
 
-	return global.GVA_DB.Create(data).Error
+	return global.DB.Create(data).Error
 }

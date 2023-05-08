@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	GVA_DB     *gorm.DB
-	GVA_VP     *viper.Viper
-	GVA_LOG    *zap.Logger
-	GVA_CONFIG config.Server
+	DB     *gorm.DB
+	VP     *viper.Viper
+	LOG    *zap.Logger
+	CONFIG config.Server
 )

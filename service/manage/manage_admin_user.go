@@ -19,21 +19,21 @@ type ManageAdminUserService struct {
 
 // CreateMallAdminUser 创建MallAdminUser记录
 func (m *ManageAdminUserService) CreateMallAdminUser(mallAdminUser manage.MallAdminUser) (err error) {
-	if !errors.Is(global.GVA_DB.Where("login_user_name = ?", mallAdminUser.LoginUserName).First(&manage.MallAdminUser{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.DB.Where("login_user_name = ?", mallAdminUser.LoginUserName).First(&manage.MallAdminUser{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在相同用户名")
 	}
-	err = global.GVA_DB.Create(&mallAdminUser).Error
+	err = global.DB.Create(&mallAdminUser).Error
 	return err
 }
 
 // UpdateMallAdminName 更新MallAdminUser昵称
 func (m *ManageAdminUserService) UpdateMallAdminName(token string, req manageReq.MallUpdateNameParam) (err error) {
 	var adminUserToken manage.MallAdminUserToken
-	err = global.GVA_DB.Where("token =? ", token).First(&adminUserToken).Error
+	err = global.DB.Where("token =? ", token).First(&adminUserToken).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
-	err = global.GVA_DB.Where("admin_user_id = ?", adminUserToken.AdminUserId).Updates(&manage.MallAdminUser{
+	err = global.DB.Where("admin_user_id = ?", adminUserToken.AdminUserId).Updates(&manage.MallAdminUser{
 		LoginUserName: req.LoginUserName,
 		NickName:      req.NickName,
 	}).Error
@@ -42,12 +42,12 @@ func (m *ManageAdminUserService) UpdateMallAdminName(token string, req manageReq
 
 func (m *ManageAdminUserService) UpdateMallAdminPassWord(token string, req manageReq.MallUpdatePasswordParam) (err error) {
 	var adminUserToken manage.MallAdminUserToken
-	err = global.GVA_DB.Where("token =? ", token).First(&adminUserToken).Error
+	err = global.DB.Where("token =? ", token).First(&adminUserToken).Error
 	if err != nil {
 		return errors.New("用户未登录")
 	}
 	var adminUser manage.MallAdminUser
-	err = global.GVA_DB.Where("admin_user_id =?", adminUserToken.AdminUserId).First(&adminUser).Error
+	err = global.DB.Where("admin_user_id =?", adminUserToken.AdminUserId).First(&adminUser).Error
 	if err != nil {
 		return errors.New("不存在的用户")
 	}
@@ -56,26 +56,26 @@ func (m *ManageAdminUserService) UpdateMallAdminPassWord(token string, req manag
 	}
 	adminUser.LoginPassword = req.NewPassword
 
-	err = global.GVA_DB.Where("admin_user_id=?", adminUser.AdminUserId).Updates(&adminUser).Error
+	err = global.DB.Where("admin_user_id=?", adminUser.AdminUserId).Updates(&adminUser).Error
 	return
 }
 
 // GetMallAdminUser 根据id获取MallAdminUser记录
 func (m *ManageAdminUserService) GetMallAdminUser(token string) (err error, mallAdminUser manage.MallAdminUser) {
 	var adminToken manage.MallAdminUserToken
-	if errors.Is(global.GVA_DB.Where("token =?", token).First(&adminToken).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.DB.Where("token =?", token).First(&adminToken).Error, gorm.ErrRecordNotFound) {
 		return errors.New("不存在的用户"), mallAdminUser
 	}
-	err = global.GVA_DB.Where("admin_user_id = ?", adminToken.AdminUserId).First(&mallAdminUser).Error
+	err = global.DB.Where("admin_user_id = ?", adminToken.AdminUserId).First(&mallAdminUser).Error
 	return err, mallAdminUser
 }
 
 // AdminLogin 管理员登陆
 func (m *ManageAdminUserService) AdminLogin(params manageReq.MallAdminLoginParam) (err error, mallAdminUser manage.MallAdminUser, adminToken manage.MallAdminUserToken) {
-	err = global.GVA_DB.Where("login_user_name=? AND login_password=?", params.UserName, params.PasswordMd5).First(&mallAdminUser).Error
+	err = global.DB.Where("login_user_name=? AND login_password=?", params.UserName, params.PasswordMd5).First(&mallAdminUser).Error
 	if mallAdminUser != (manage.MallAdminUser{}) {
 		token := getNewToken(time.Now().UnixNano()/1e6, int(mallAdminUser.AdminUserId))
-		global.GVA_DB.Where("admin_user_id", mallAdminUser.AdminUserId).First(&adminToken)
+		global.DB.Where("admin_user_id", mallAdminUser.AdminUserId).First(&adminToken)
 		nowDate := time.Now()
 		// 48小时过期
 		expireTime, _ := time.ParseDuration("48h")
@@ -86,14 +86,14 @@ func (m *ManageAdminUserService) AdminLogin(params manageReq.MallAdminLoginParam
 			adminToken.Token = token
 			adminToken.UpdateTime = nowDate
 			adminToken.ExpireTime = expireDate
-			if err = global.GVA_DB.Create(&adminToken).Error; err != nil {
+			if err = global.DB.Create(&adminToken).Error; err != nil {
 				return
 			}
 		} else {
 			adminToken.Token = token
 			adminToken.UpdateTime = nowDate
 			adminToken.ExpireTime = expireDate
-			if err = global.GVA_DB.Save(&adminToken).Error; err != nil {
+			if err = global.DB.Save(&adminToken).Error; err != nil {
 				return
 			}
 		}

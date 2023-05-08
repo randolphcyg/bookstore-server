@@ -96,7 +96,7 @@ func (m *MallBooksCategoryService) GetCategoriesForIndex() (err error, bookStore
 
 // 获取分类数据
 func selectByLevelAndParentIdsAndNumber(ids []int, level int, limit int) (err error, categories []manage.MallBooksCategory) {
-	global.GVA_DB.Where("parent_id in ? and category_level =? and is_deleted = 0", ids, level).
+	global.DB.Where("parent_id in ? and category_level =? and is_deleted = 0", ids, level).
 		Order("category_rank desc").Limit(limit).Find(&categories)
 	return
 }
